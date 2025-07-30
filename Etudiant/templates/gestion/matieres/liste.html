@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Matières</title>
+    <style>
+/* ===== VARIABLES CSS - PALETTE DE COULEURS ===== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-button: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== RESET ET BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E3F2FD 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    min-height: 100vh;
+}
+
+/* ===== HEADER DE LA PAGE ===== */
+.page-header {
+    background: var(--color-surface);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet décoratif sur le header */
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+    position: relative;
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+/* ===== BOUTONS ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    box-shadow: var(--shadow-button);
+    font-size: 0.95rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left var(--transition-fast);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), #1976D2);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--color-secondary), #388E3C);
+    color: white;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--color-warning), #F57C00);
+    color: white;
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 140, 0, 0.3);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--color-danger), #D32F2F);
+    color: white;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+}
+
+/* ===== CONTENU PRINCIPAL ===== */
+.content {
+    background: transparent;
+}
+
+/* ===== LISTE DES MATIÈRES ===== */
+.matieres-list {
+    display: grid;
+    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+/* ===== CARTE MATIÈRE ===== */
+.matiere-item {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: all var(--transition-smooth);
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.matiere-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Barre colorée en haut de chaque carte */
+.matiere-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+.matiere-info {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.matiere-nom {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.3;
+}
+
+.matiere-code,
+.matiere-coefficient,
+.matiere-enseignant,
+.matiere-notes {
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.matiere-code::before {
+    content: "📋";
+    font-size: 1rem;
+}
+
+.matiere-coefficient::before {
+    content: "⚖️";
+    font-size: 1rem;
+}
+
+.matiere-enseignant::before {
+    content: "👨‍🏫";
+    font-size: 1rem;
+}
+
+.matiere-notes::before {
+    content: "📊";
+    font-size: 1rem;
+}
+
+.matiere-description {
+    margin: var(--spacing-sm) 0;
+    color: var(--color-text-muted);
+    font-style: italic;
+    line-height: 1.5;
+    background: rgba(30, 136, 229, 0.05);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--color-primary);
+}
+
+/* ===== STATUT ===== */
+.matiere-statut {
+    margin-top: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.statut-actif,
+.statut-inactif {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.statut-actif {
+    background: rgba(67, 160, 71, 0.1);
+    color: var(--color-secondary);
+    border: 1px solid rgba(67, 160, 71, 0.2);
+}
+
+.statut-actif::before {
+    content: "✅";
+    font-size: 0.8rem;
+}
+
+.statut-inactif {
+    background: rgba(229, 57, 53, 0.1);
+    color: var(--color-danger);
+    border: 1px solid rgba(229, 57, 53, 0.2);
+}
+
+.statut-inactif::before {
+    content: "❌";
+    font-size: 0.8rem;
+}
+
+/* ===== ACTIONS MATIÈRE ===== */
+.matiere-actions {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: rgba(0,0,0,0.02);
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+.matiere-actions .btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.85rem;
+    min-width: auto;
+}
+
+/* ===== MESSAGE AUCUNE MATIÈRE ===== */
+.no-matieres {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-top: var(--spacing-lg);
+}
+
+.no-matieres-message {
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+}
+
+.no-matieres::before {
+    content: "📚";
+    font-size: 4rem;
+    display: block;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+/* Tablettes */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .page-header {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--spacing-md);
+    }
+    
+    .page-title {
+        font-size: 1.6rem;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .matieres-list {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .matiere-info,
+    .matiere-actions {
+        padding: var(--spacing-md);
+    }
+    
+    .matiere-actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .matiere-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Mobiles */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-xs);
+    }
+    
+    .page-header {
+        padding: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .page-title {
+        font-size: 1.4rem;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .header-actions .btn {
+        width: 100%;
+        justify-content: center;
+        padding: var(--spacing-sm);
+    }
+    
+    .matiere-nom {
+        font-size: 1.2rem;
+    }
+    
+    .matiere-info {
+        padding: var(--spacing-sm);
+    }
+    
+    .matiere-actions {
+        padding: var(--spacing-sm);
+    }
+    
+    .btn {
+        font-size: 0.9rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+}
+
+/* Très petits écrans */
+@media (max-width: 320px) {
+    .page-title {
+        font-size: 1.2rem;
+    }
+    
+    .matiere-nom {
+        font-size: 1.1rem;
+    }
+    
+    .btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* ===== ANIMATIONS ET MICRO-INTERACTIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.matiere-item {
+    animation: fadeInUp var(--transition-smooth) ease-out;
+}
+
+.matiere-item:nth-child(even) {
+    animation-delay: 0.1s;
+}
+
+.matiere-item:nth-child(3n) {
+    animation-delay: 0.2s;
+}
+
+/* ===== ÉTATS FOCUS POUR L'ACCESSIBILITÉ ===== */
+.btn:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.btn:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    body {
+        background: white;
+    }
+    
+    .container {
+        max-width: none;
+        padding: 0;
+    }
+    
+    .page-header,
+    .matiere-item {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .matiere-actions {
+        display: none;
+    }
+    
+    .btn {
+        display: none;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header class="page-header" id="page-header">
+            <h1 class="page-title" id="page-title">Liste des Matières</h1>
+            <div class="header-actions" id="header-actions">
+                <a href="{% url 'ajouter_matiere' %}" class="btn btn-primary" id="btn-ajouter">Ajouter une Matière</a>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary" id="btn-retour">Retour</a>
+            </div>
+        </header>
+
+        <main class="content" id="main-content">
+            {% if matieres %}
+                <div class="matieres-list" id="matieres-list">
+                    {% for matiere in matieres %}
+                        <div class="matiere-item" id="matiere-{{ matiere.id }}">
+                            <div class="matiere-info" id="matiere-info-{{ matiere.id }}">
+                                <h3 class="matiere-nom" id="matiere-nom-{{ matiere.id }}">{{ matiere.nom }}</h3>
+                                <p class="matiere-code" id="matiere-code-{{ matiere.id }}">Code : {{ matiere.code }}</p>
+                                <p class="matiere-coefficient" id="matiere-coefficient-{{ matiere.id }}">Coefficient : {{ matiere.coefficient }}</p>
+                                {% if matiere.description %}
+                                    <p class="matiere-description" id="matiere-description-{{ matiere.id }}">{{ matiere.description }}</p>
+                                {% endif %}
+                                {% if matiere.enseignant %}
+                                    <p class="matiere-enseignant" id="matiere-enseignant-{{ matiere.id }}">
+                                        Enseignant : {{ matiere.enseignant.first_name }} {{ matiere.enseignant.last_name }}
+                                    </p>
+                                {% else %}
+                                    <p class="matiere-enseignant" id="matiere-enseignant-{{ matiere.id }}">
+                                        Enseignant : Non assigné
+                                    </p>
+                                {% endif %}
+                                <p class="matiere-notes" id="matiere-notes-{{ matiere.id }}">{{ matiere.nb_notes }} note(s)</p>
+                                <p class="matiere-statut" id="matiere-statut-{{ matiere.id }}">
+                                    {% if matiere.actif %}
+                                        <span class="statut-actif" id="statut-actif-{{ matiere.id }}">Active</span>
+                                    {% else %}
+                                        <span class="statut-inactif" id="statut-inactif-{{ matiere.id }}">Inactive</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="matiere-actions" id="matiere-actions-{{ matiere.id }}">
+                               
+                                <a href="{% url 'modifier_matiere' matiere.pk %}" class="btn btn-warning" id="btn-modifier-{{ matiere.id }}">Modifier</a>
+                                <a href="{% url 'supprimer_matiere' matiere.pk %}" class="btn btn-danger" id="btn-supprimer-{{ matiere.id }}">Supprimer</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-matieres" id="no-matieres">
+                    <p class="no-matieres-message" id="no-matieres-message">Aucune matière trouvée.</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saisie rapide de notes</title>
+    <style>
+        /* ===================================
+   VARIABLES CSS - PALETTE DE COULEURS
+   =================================== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-focus: 0 0 0 3px rgba(30, 136, 229, 0.1);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-2xl: 4rem;
+    
+    /* Tailles de police */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+    
+    /* Couleurs pour notes */
+    --color-excellent: #4CAF50;
+    --color-good: #8BC34A;
+    --color-average: #FF9800;
+    --color-poor: #F44336;
+}
+
+/* ===================================
+   RESET ET BASE STYLES
+   =================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E8F4FD 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    font-size: var(--font-size-base);
+    min-height: 100vh;
+}
+
+/* ===================================
+   CONTENEUR PRINCIPAL
+   =================================== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    min-height: 100vh;
+}
+
+/* ===================================
+   HEADER SECTION
+   =================================== */
+.header-section {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-xl) 0;
+}
+
+.page-title {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 2px;
+}
+
+/* ===================================
+   SÉLECTION DE CLASSE
+   =================================== */
+.classe-selection {
+    background: var(--color-surface);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.classe-selection::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-warning));
+}
+
+.classe-form {
+    display: flex;
+    justify-content: center;
+}
+
+.classe-selection .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    max-width: 400px;
+    width: 100%;
+}
+
+.classe-selection .form-label {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: center;
+}
+
+.classe-selection select {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid #E0E0E0;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    background: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.classe-selection select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+    transform: translateY(-2px);
+}
+
+.classe-selection select:hover {
+    border-color: var(--color-primary);
+}
+
+/* ===================================
+   FORMULAIRE PRINCIPAL
+   =================================== */
+.form-container {
+    background: var(--color-surface);
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+.notes-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+}
+
+/* ===================================
+   SECTIONS ET TITRES
+   =================================== */
+.section-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid #E3F2FD;
+    position: relative;
+}
+
+.section-title::before {
+    content: '📝';
+    margin-right: var(--spacing-sm);
+    font-size: var(--font-size-2xl);
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: var(--color-primary);
+}
+
+/* ===================================
+   INFORMATIONS COMMUNES
+   =================================== */
+.common-info {
+    background: linear-gradient(135deg, #F8F9FA, #E3F2FD);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--color-primary);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    position: relative;
+}
+
+.form-label::before {
+    content: '•';
+    color: var(--color-primary);
+    font-weight: bold;
+    margin-right: var(--spacing-xs);
+}
+
+/* Champs de formulaire */
+.form-control {
+    padding: var(--spacing-md);
+    border: 2px solid #E0E0E0;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    transition: all 0.3s ease;
+    background: white;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+    transform: translateY(-2px);
+}
+
+.form-control:hover {
+    border-color: var(--color-primary);
+}
+
+/* Messages d'erreur */
+.error-message {
+    background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+    color: var(--color-danger);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    border-left: 4px solid var(--color-danger);
+    animation: shake 0.5s ease;
+}
+
+/* ===================================
+   SECTION ÉTUDIANTS
+   =================================== */
+.etudiants-section {
+    background: linear-gradient(135deg, #FAFAFA, #F0F8FF);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--color-secondary);
+}
+
+.etudiants-list {
+    display: grid;
+    gap: var(--spacing-md);
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: var(--spacing-sm);
+}
+
+/* Scrollbar personnalisée */
+.etudiants-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.etudiants-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.etudiants-list::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+}
+
+.etudiants-list::-webkit-scrollbar-thumb:hover {
+    background: #1976D2;
+}
+
+/* Item étudiant */
+.etudiant-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--spacing-lg);
+    background: var(--color-surface);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.etudiant-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--color-primary);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.etudiant-item:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-hover);
+    border-left-color: var(--color-primary);
+}
+
+.etudiant-item:hover::before {
+    transform: scaleY(1);
+}
+
+.etudiant-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.etudiant-nom {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+}
+
+.etudiant-nom::before {
+    content: '👤';
+    margin-right: var(--spacing-xs);
+    opacity: 0.7;
+}
+
+/* Champ de note */
+.note-input {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.note-field {
+    width: 100px;
+    text-align: center;
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    padding: var(--spacing-sm) var(--spacing-xs);
+    border: 2px solid #E0E0E0;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.note-field:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+    transform: scale(1.05);
+}
+
+.note-field:valid {
+    border-color: var(--color-secondary);
+}
+
+.note-field:invalid:not(:placeholder-shown) {
+    border-color: var(--color-danger);
+    animation: shake 0.3s ease;
+}
+
+/* Couleurs dynamiques pour les notes */
+.note-field[value="20"], .note-field[value="19"], .note-field[value="18"] {
+    border-color: var(--color-excellent);
+    background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+}
+
+.note-field[value="17"], .note-field[value="16"], .note-field[value="15"], .note-field[value="14"] {
+    border-color: var(--color-good);
+    background: linear-gradient(135deg, #F1F8E9, #DCEDC8);
+}
+
+.note-field[value="13"], .note-field[value="12"], .note-field[value="11"], .note-field[value="10"] {
+    border-color: var(--color-warning);
+    background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+}
+
+/* ===================================
+   ACTIONS DU FORMULAIRE
+   =================================== */
+.form-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 2px solid #F0F0F0;
+}
+
+/* ===================================
+   BOUTONS
+   =================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border: none;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    min-height: 48px;
+    gap: var(--spacing-xs);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), #42A5F5);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1976D2, var(--color-primary));
+}
+
+.btn-primary::after {
+    content: '💾';
+    margin-left: var(--spacing-xs);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--color-secondary), #66BB6A);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #388E3C, var(--color-secondary));
+}
+
+.btn-secondary::after {
+    content: '❌';
+    margin-left: var(--spacing-xs);
+}
+
+/* ===================================
+   MESSAGES D'INFORMATION
+   =================================== */
+.no-students,
+.no-class {
+    background: var(--color-surface);
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    text-align: center;
+    border-left: 4px solid var(--color-warning);
+}
+
+.info-message {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-muted);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.info-message::before {
+    content: 'ℹ️';
+    font-size: var(--font-size-2xl);
+}
+
+/* ===================================
+   ANIMATIONS
+   =================================== */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Animation des éléments */
+.etudiant-item {
+    animation: slideInLeft 0.6s ease forwards;
+}
+
+.etudiant-item:nth-child(even) {
+    animation-delay: 0.1s;
+}
+
+.etudiant-item:nth-child(odd) {
+    animation-delay: 0.05s;
+}
+
+.common-info {
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.etudiants-section {
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 0.2s;
+}
+
+/* ===================================
+   INDICATEURS VISUELS
+   =================================== */
+.form-group {
+    position: relative;
+}
+
+.form-group.has-value .form-label {
+    color: var(--color-primary);
+}
+
+.form-group.has-error .form-control {
+    border-color: var(--color-danger);
+    animation: shake 0.5s ease;
+}
+
+/* Compteur de notes saisies */
+.etudiants-section::after {
+    content: attr(data-count) ' notes à saisir';
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-lg);
+    background: var(--color-primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - TABLETTES
+   =================================== */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+    
+    .page-title {
+        font-size: var(--font-size-2xl);
+    }
+    
+    .form-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .etudiant-item {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .note-field {
+        width: 120px;
+        margin: 0 auto;
+    }
+    
+    .etudiants-list {
+        max-height: 500px;
+    }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - MOBILES
+   =================================== */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .header-section {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .page-title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .form-container {
+        padding: var(--spacing-md);
+    }
+    
+    .common-info {
+        padding: var(--spacing-md);
+    }
+    
+    .etudiants-section {
+        padding: var(--spacing-md);
+    }
+    
+    .section-title {
+        font-size: var(--font-size-lg);
+        text-align: center;
+    }
+    
+    .etudiant-item {
+        padding: var(--spacing-sm);
+    }
+    
+    .etudiant-nom {
+        font-size: var(--font-size-sm);
+        text-align: center;
+    }
+    
+    .note-field {
+        width: 100px;
+        font-size: var(--font-size-base);
+    }
+    
+    .classe-selection {
+        padding: var(--spacing-md);
+    }
+    
+    .classe-selection .form-label {
+        font-size: var(--font-size-base);
+    }
+}
+
+/* ===================================
+   ACCESSIBILITÉ
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus visible pour l'accessibilité */
+.btn:focus-visible,
+.form-control:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ===================================
+   ÉTATS SPÉCIAUX
+   =================================== */
+.btn:disabled {
+    background: var(--color-disabled) !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Validation en temps réel */
+.note-field.valid {
+    border-color: var(--color-secondary);
+    background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+}
+
+.note-field.invalid {
+    border-color: var(--color-danger);
+    background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+}
+
+/* Hover states pour une meilleure UX */
+.form-container:hover {
+    box-shadow: var(--shadow-hover);
+    transition: box-shadow 0.3s ease;
+}
+
+.classe-selection:hover {
+    box-shadow: var(--shadow-hover);
+    transition: box-shadow 0.3s ease;
+}
+
+/* Indicateur de progression */
+.progress-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color-background);
+    z-index: 1000;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    width: 0%;
+    transition: width 0.3s ease;
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <div class="header-section" id="header-section">
+            <h1 class="page-title" id="page-title">Saisie rapide de notes</h1>
+        </div>
+
+        <!-- Sélection de classe -->
+        <div class="classe-selection" id="classe-selection">
+            <form method="get" class="classe-form" id="classe-form">
+                <div class="form-group" id="classe-group">
+                    <label for="classe" class="form-label">Sélectionner une classe :</label>
+                    <select name="classe" id="classe" class="form-control" onchange="this.form.submit()">
+                        <option value="">-- Choisir une classe --</option>
+                        {% for classe in classes %}
+                            <option value="{{ classe.id }}" {% if classe.id|stringformat:"s" == classe_selectionnee %}selected{% endif %}>
+                                {{ classe }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        {% if etudiants %}
+        <!-- Formulaire de saisie rapide -->
+        <div class="form-container" id="form-container">
+            <form method="post" class="notes-form" id="notes-form">
+                {% csrf_token %}
+                
+                <!-- Informations communes -->
+                <div class="common-info" id="common-info">
+                    <h3 class="section-title" id="common-info-title">Informations communes</h3>
+                    
+                    <div class="form-row" id="common-row-1">
+                        <div class="form-group" id="matiere-group">
+                            <label for="{{ form.matiere.id_for_label }}" class="form-label">{{ form.matiere.label }}</label>
+                            {{ form.matiere }}
+                            {% if form.matiere.errors %}
+                                <div class="error-message" id="matiere-errors">
+                                    {{ form.matiere.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group" id="type-evaluation-group">
+                            <label for="{{ form.type_evaluation.id_for_label }}" class="form-label">{{ form.type_evaluation.label }}</label>
+                            {{ form.type_evaluation }}
+                            {% if form.type_evaluation.errors %}
+                                <div class="error-message" id="type-evaluation-errors">
+                                    {{ form.type_evaluation.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="common-row-2">
+                        <div class="form-group" id="date-evaluation-group">
+                            <label for="{{ form.date_evaluation.id_for_label }}" class="form-label">{{ form.date_evaluation.label }}</label>
+                            {{ form.date_evaluation }}
+                            {% if form.date_evaluation.errors %}
+                                <div class="error-message" id="date-evaluation-errors">
+                                    {{ form.date_evaluation.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group" id="semestre-group">
+                            <label for="{{ form.semestre.id_for_label }}" class="form-label">{{ form.semestre.label }}</label>
+                            {{ form.semestre }}
+                            {% if form.semestre.errors %}
+                                <div class="error-message" id="semestre-errors">
+                                    {{ form.semestre.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group" id="note-sur-group">
+                            <label for="{{ form.note_sur.id_for_label }}" class="form-label">{{ form.note_sur.label }}</label>
+                            {{ form.note_sur }}
+                            {% if form.note_sur.errors %}
+                                <div class="error-message" id="note-sur-errors">
+                                    {{ form.note_sur.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors" id="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <!-- Liste des étudiants -->
+                <div class="etudiants-section" id="etudiants-section">
+                    <h3 class="section-title" id="etudiants-title">Notes des étudiants</h3>
+                    
+                    <div class="etudiants-list" id="etudiants-list">
+                        {% for etudiant in etudiants %}
+                        <div class="etudiant-item" id="etudiant-{{ etudiant.id }}">
+                            <div class="etudiant-info" id="etudiant-info-{{ etudiant.id }}">
+                                <span class="etudiant-nom">{{ etudiant.nom }} {{ etudiant.prenom }}</span>
+                            </div>
+                            <div class="note-input" id="note-input-{{ etudiant.id }}">
+                                <input 
+                                    type="number" 
+                                    name="note_{{ etudiant.id }}" 
+                                    id="note_{{ etudiant.id }}"
+                                    class="form-control note-field" 
+                                    step="0.01" 
+                                    min="0"
+                                    placeholder="Note"
+                                >
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-actions" id="form-actions">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">Enregistrer toutes les notes</button>
+                    <a href="{% url 'liste_notes' %}" class="btn btn-secondary" id="cancel-btn">Annuler</a>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        {% if not etudiants and classe_selectionnee %}
+        <div class="no-students" id="no-students">
+            <p class="info-message">Aucun étudiant actif trouvé dans cette classe.</p>
+        </div>
+        {% endif %}
+
+        {% if not classe_selectionnee %}
+        <div class="no-class" id="no-class">
+            <p class="info-message">Veuillez sélectionner une classe pour commencer la saisie des notes.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

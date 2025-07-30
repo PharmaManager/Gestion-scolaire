@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supprimer une Classe</title>
+    <style>
+        /* ===== VARIABLES CSS - PALETTE DE COULEURS ===== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Couleurs spéciales pour la suppression */
+    --color-danger-light: rgba(229, 57, 53, 0.1);
+    --color-danger-border: rgba(229, 57, 53, 0.3);
+    --color-warning-light: rgba(251, 140, 0, 0.1);
+    --color-warning-border: rgba(251, 140, 0, 0.3);
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-danger: 0 4px 20px rgba(229, 57, 53, 0.25);
+    --shadow-warning: 0 4px 20px rgba(251, 140, 0, 0.25);
+    --shadow-focus: 0 0 0 3px rgba(30, 136, 229, 0.2);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 2.5rem;
+    
+    /* Typographie */
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+    --transition-slow: 0.5s ease-in-out;
+}
+
+/* ===== RESET ET BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E8F4F8 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    font-size: var(--font-size-base);
+}
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== HEADER ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-danger), var(--color-warning));
+}
+
+.page-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-danger);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.page-title::before {
+    content: '⚠️';
+    font-size: var(--font-size-xl);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-danger), var(--color-warning));
+    border-radius: 2px;
+}
+
+/* ===== ACTIONS HEADER ===== */
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+/* ===== MESSAGES ===== */
+.messages {
+    margin-bottom: var(--spacing-lg);
+}
+
+.message {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    animation: slideInRight 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.message::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: currentColor;
+}
+
+.message-success {
+    background: rgba(67, 160, 71, 0.1);
+    color: var(--color-secondary);
+    border: 1px solid rgba(67, 160, 71, 0.2);
+}
+
+.message-error {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger-border);
+}
+
+.message-warning {
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+    border: 1px solid var(--color-warning-border);
+}
+
+.message-info {
+    background: rgba(30, 136, 229, 0.1);
+    color: var(--color-primary);
+    border: 1px solid rgba(30, 136, 229, 0.2);
+}
+
+/* ===== CONTENEUR DE SUPPRESSION ===== */
+.delete-container {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    position: relative;
+    animation: slideInUp 0.5s ease-out 0.2s both;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.delete-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-danger), var(--color-warning));
+}
+
+/* ===== AVERTISSEMENT DE SUPPRESSION ===== */
+.delete-warning {
+    background: var(--color-danger-light);
+    border: 2px solid var(--color-danger-border);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    position: relative;
+    animation: shake 0.5s ease-in-out 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+}
+
+.delete-warning::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--color-danger), var(--color-warning), var(--color-danger));
+    border-radius: var(--border-radius-lg);
+    z-index: -1;
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background: linear-gradient(45deg, var(--color-danger), var(--color-warning), var(--color-danger));
+    }
+    50% {
+        background: linear-gradient(45deg, var(--color-warning), var(--color-danger), var(--color-warning));
+    }
+}
+
+.warning-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-danger);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.warning-title::before {
+    content: '🚨';
+    font-size: var(--font-size-xl);
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.warning-message {
+    font-size: var(--font-size-lg);
+    color: var(--color-danger);
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== DÉTAILS DE LA CLASSE ===== */
+.classe-details {
+    padding: var(--spacing-lg);
+}
+
+.classe-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.classe-title::before {
+    content: '📋';
+    font-size: var(--font-size-lg);
+}
+
+.classe-info {
+    background: var(--color-background);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--color-primary);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.classe-info p {
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-base);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) 0;
+}
+
+.classe-info p:last-child {
+    margin-bottom: 0;
+}
+
+.classe-nom::before {
+    content: '🎓';
+    font-size: var(--font-size-base);
+}
+
+.classe-niveau::before {
+    content: '📚';
+    font-size: var(--font-size-base);
+}
+
+.classe-annee::before {
+    content: '📅';
+    font-size: var(--font-size-base);
+}
+
+.classe-date::before {
+    content: '🕒';
+    font-size: var(--font-size-base);
+}
+
+.classe-info strong {
+    color: var(--color-primary);
+    font-weight: 600;
+    min-width: 140px;
+}
+
+/* ===== ACTIONS DE SUPPRESSION ===== */
+.delete-actions {
+    padding: var(--spacing-lg);
+    background: var(--color-background);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.delete-form {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===== BOUTONS ===== */
+.btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    min-height: 48px;
+    text-align: center;
+    gap: var(--spacing-xs);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-normal);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+/* Bouton de danger - Confirmer suppression */
+.btn-danger {
+    background: linear-gradient(135deg, var(--color-danger) 0%, #C62828 100%);
+    color: white;
+    box-shadow: var(--shadow-danger);
+    position: relative;
+}
+
+.btn-danger::after {
+    content: '🗑️';
+    margin-left: var(--spacing-xs);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #C62828 0%, #B71C1C 100%);
+    box-shadow: 0 6px 25px rgba(229, 57, 53, 0.4);
+    transform: translateY(-3px);
+    animation: dangerPulse 0.3s ease-in-out;
+}
+
+@keyframes dangerPulse {
+    0%, 100% {
+        box-shadow: 0 6px 25px rgba(229, 57, 53, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 30px rgba(229, 57, 53, 0.6);
+    }
+}
+
+.btn-danger:active {
+    transform: translateY(-1px);
+    animation: dangerShake 0.2s ease-in-out;
+}
+
+@keyframes dangerShake {
+    0%, 100% { transform: translateY(-1px) translateX(0); }
+    25% { transform: translateY(-1px) translateX(-2px); }
+    75% { transform: translateY(-1px) translateX(2px); }
+}
+
+/* Bouton secondaire - Annuler */
+.btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    border: 2px solid var(--color-disabled);
+    box-shadow: var(--shadow-card);
+}
+
+.btn-secondary::after {
+    content: '↩️';
+    margin-left: var(--spacing-xs);
+}
+
+.btn-secondary:hover {
+    background: var(--color-background);
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablettes */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-sm);
+        max-width: 100%;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+        padding: var(--spacing-lg);
+    }
+    
+    .page-title {
+        font-size: var(--font-size-xl);
+        justify-content: center;
+    }
+    
+    .delete-container {
+        margin: 0 var(--spacing-xs);
+    }
+    
+    .delete-form {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* Smartphones */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-xs);
+    }
+    
+    .page-header {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .page-title {
+        font-size: var(--font-size-lg);
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .delete-warning {
+        margin: var(--spacing-md);
+        padding: var(--spacing-md);
+    }
+    
+    .warning-title {
+        font-size: var(--font-size-lg);
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .warning-message {
+        font-size: var(--font-size-base);
+    }
+    
+    .classe-details {
+        padding: var(--spacing-md);
+    }
+    
+    .classe-title {
+        font-size: var(--font-size-lg);
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        text-align: center;
+    }
+    
+    .classe-info {
+        padding: var(--spacing-md);
+    }
+    
+    .classe-info p {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+        text-align: left;
+    }
+    
+    .classe-info strong {
+        min-width: auto;
+    }
+    
+    .delete-actions {
+        padding: var(--spacing-md);
+    }
+    
+    .btn {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-base);
+        min-height: 52px;
+    }
+}
+
+/* Très petits écrans */
+@media (max-width: 320px) {
+    .page-title {
+        font-size: var(--font-size-base);
+    }
+    
+    .warning-title {
+        font-size: var(--font-size-base);
+    }
+    
+    .warning-message {
+        font-size: var(--font-size-sm);
+    }
+    
+    .classe-title {
+        font-size: var(--font-size-base);
+    }
+    
+    .classe-info p {
+        font-size: var(--font-size-sm);
+    }
+    
+    .btn {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+}
+
+/* ===== AMÉLIORATION DE L'ACCESSIBILITÉ ===== */
+
+/* Focus visible amélioré */
+.btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+.btn-danger:focus-visible {
+    outline-color: var(--color-danger);
+}
+
+/* Réduction des animations pour les utilisateurs sensibles */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== ÉTATS SPÉCIAUX ===== */
+
+/* Loading state pour le bouton de suppression */
+.btn-danger:disabled {
+    background: var(--color-disabled);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    animation: none;
+}
+
+.btn-danger:disabled::before,
+.btn-danger:disabled::after {
+    display: none;
+}
+
+/* Confirmation en cours */
+.delete-form.submitting .btn-danger {
+    background: var(--color-disabled);
+    cursor: wait;
+}
+
+.delete-form.submitting .btn-danger::after {
+    content: '⏳';
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== MODE SOMBRE (OPTIONNEL) ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #121212;
+        --color-surface: #1E1E1E;
+        --color-text: #E0E0E0;
+        --color-text-muted: #A0A0A0;
+        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+        --shadow-danger: 0 4px 20px rgba(229, 57, 53, 0.4);
+        --color-danger-light: rgba(229, 57, 53, 0.15);
+        --color-danger-border: rgba(229, 57, 53, 0.4);
+    }
+    
+    body {
+        background: linear-gradient(135deg, var(--color-background) 0%, #1A1A1A 100%);
+    }
+    
+    .classe-info {
+        background: #2A2A2A;
+        border-left-color: var(--color-primary);
+    }
+    
+    .delete-actions {
+        background: #2A2A2A;
+        border-top-color: rgba(255, 255, 255, 0.1);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header class="page-header" id="page-header">
+            <h1 class="page-title" id="page-title">Supprimer la Classe</h1>
+            <div class="header-actions" id="header-actions">
+                <a href="{% url 'liste_classes' %}" class="btn btn-secondary" id="btn-retour">Retour à la Liste</a>
+            </div>
+        </header>
+
+        <main class="content" id="main-content">
+            <!-- Messages -->
+            {% if messages %}
+                <div class="messages" id="messages">
+                    {% for message in messages %}
+                        <div class="message message-{{ message.tags }}" id="message-{{ forloop.counter }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Confirmation de suppression -->
+            <div class="delete-container" id="delete-container">
+                <div class="delete-warning" id="delete-warning">
+                    <h2 class="warning-title" id="warning-title">Attention !</h2>
+                    <p class="warning-message" id="warning-message">
+                        Êtes-vous sûr de vouloir supprimer cette classe ?
+                    </p>
+                </div>
+
+                <div class="classe-details" id="classe-details">
+                    <h3 class="classe-title" id="classe-title">Détails de la classe :</h3>
+                    <div class="classe-info" id="classe-info">
+                        <p class="classe-nom" id="classe-nom"><strong>Nom :</strong> {{ classe.nom }}</p>
+                        <p class="classe-niveau" id="classe-niveau"><strong>Niveau :</strong> {{ classe.niveau }}</p>
+                        <p class="classe-annee" id="classe-annee"><strong>Année scolaire :</strong> {{ classe.annee_scolaire }}</p>
+                        <p class="classe-date" id="classe-date"><strong>Créée le :</strong> {{ classe.date_creation|date:"d/m/Y à H:i" }}</p>
+                    </div>
+                </div>
+
+                <div class="delete-actions" id="delete-actions">
+                    <form method="post" class="delete-form" id="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" id="btn-confirm-delete">
+                            Oui, Supprimer
+                        </button>
+                        <a href="{% url 'liste_classes' %}" class="btn btn-secondary" id="btn-cancel">
+                            Annuler
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

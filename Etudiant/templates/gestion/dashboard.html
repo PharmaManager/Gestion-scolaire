@@ -1,0 +1,1525 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Gestion des Étudiants</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Custom CSS -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+    <style>
+    /* ===================================
+   VARIABLES CSS - PALETTE DE COULEURS
+   =================================== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Couleurs étendues pour actions */
+    --color-success: #4CAF50;
+    --color-info: #2196F3;
+    --color-dark: #424242;
+    --color-light: #F8F9FA;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-active: 0 8px 24px rgba(0, 0, 0, 0.16);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 16px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-2xl: 4rem;
+    
+    /* Tailles de police */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+}
+
+/* ===================================
+   SECTION ACTIONS RAPIDES
+   =================================== */
+.quick-actions-section {
+    margin-bottom: var(--spacing-2xl);
+    position: relative;
+}
+
+.quick-actions-card {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.quick-actions-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-warning), var(--color-danger));
+    animation: rainbow-slide 3s linear infinite;
+}
+
+.quick-actions-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* ===================================
+   HEADER DE LA CARTE
+   =================================== */
+.card-header {
+    padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
+    background: linear-gradient(135deg, #FAFAFA, #F0F4FF);
+    border-bottom: 1px solid #E0E7FF;
+}
+
+.card-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    position: relative;
+}
+
+.card-title i {
+    color: var(--color-primary);
+    font-size: var(--font-size-3xl);
+    animation: pulse 2s infinite;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 2px;
+}
+
+/* ===================================
+   CONTENU DE LA CARTE
+   =================================== */
+.card-content {
+    padding: var(--spacing-xl);
+}
+
+/* ===================================
+   GRILLE DES ACTIONS RAPIDES
+   =================================== */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--spacing-lg);
+    max-width: 100%;
+}
+
+/* ===================================
+   BOUTONS D'ACTION RAPIDE
+   =================================== */
+.quick-action-btnn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+    background: var(--color-surface);
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-card);
+}
+
+/* Effet de brillance au survol */
+.quick-action-btnn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+    z-index: 1;
+}
+
+.quick-action-btnn:hover::before {
+    left: 100%;
+}
+
+/* États de survol et focus */
+.quick-action-btnn:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--shadow-active);
+}
+
+.quick-action-btnn:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.quick-action-btnn:focus {
+    outline: none;
+    box-shadow: var(--shadow-active), 0 0 0 3px rgba(30, 136, 229, 0.3);
+}
+
+/* ===================================
+   ICÔNES D'ACTION
+   =================================== */
+.action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.action-icon i {
+    font-size: var(--font-size-2xl);
+    transition: all 0.3s ease;
+}
+
+.quick-action-btn:hover .action-icon {
+    transform: rotate(360deg) scale(1.1);
+}
+
+.quick-action-btnn:hover .action-icon i {
+    transform: scale(1.2);
+}
+
+/* ===================================
+   TEXTE D'ACTION
+   =================================== */
+.action-text {
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+    line-height: 1.3;
+}
+
+.quick-action-btnn:hover .action-text {
+    transform: translateY(-2px);
+}
+
+/* ===================================
+   VARIANTES DE COULEURS
+   =================================== */
+
+/* Primary - Bleu */
+.quick-action-btnn.primary {
+    background: linear-gradient(135deg, var(--color-primary), #42A5F5);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.quick-action-btnn.primary .action-icon {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.quick-action-btnn.primary:hover {
+    background: linear-gradient(135deg, #1976D2, var(--color-primary));
+    box-shadow: 0 8px 32px rgba(30, 136, 229, 0.4);
+}
+
+/* Success - Vert */
+.quick-action-btnn.success {
+    background: linear-gradient(135deg, var(--color-success), #66BB6A);
+    color: white;
+    border-color: var(--color-success);
+}
+
+.quick-action-btnn.success .action-icon {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.quick-action-btnn.success:hover {
+    background: linear-gradient(135deg, #388E3C, var(--color-success));
+    box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4);
+}
+
+/* Warning - Orange */
+.quick-action-btnn.warning {
+    background: linear-gradient(135deg, var(--color-warning), #FFB74D);
+    color: white;
+    border-color: var(--color-warning);
+}
+
+.quick-action-btnn.warning .action-icon {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.quick-action-btnn.warning:hover {
+    background: linear-gradient(135deg, #F57C00, var(--color-warning));
+    box-shadow: 0 8px 32px rgba(251, 140, 0, 0.4);
+}
+
+/* Info - Bleu clair */
+.quick-action-btnn.info {
+    background: linear-gradient(135deg, var(--color-info), #64B5F6);
+    color: white;
+    border-color: var(--color-info);
+}
+
+.quick-action-btnn.info .action-icon {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.quick-action-btnn.info:hover {
+    background: linear-gradient(135deg, #1976D2, var(--color-info));
+    box-shadow: 0 8px 32px rgba(33, 150, 243, 0.4);
+}
+
+/* Danger - Rouge */
+.quick-action-btn.danger {
+    background: linear-gradient(135deg, var(--color-danger), #EF5350);
+    color: white;
+    border-color: var(--color-danger);
+}
+
+.quick-action-btnn.danger .action-icon {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.quick-action-btnn.danger:hover {
+    background: linear-gradient(135deg, #D32F2F, var(--color-danger));
+    box-shadow: 0 8px 32px rgba(229, 57, 53, 0.4);
+}
+
+/* Dark - Sombre */
+.quick-action-btnn.dark {
+    background: linear-gradient(135deg, var(--color-dark), #616161);
+    color: white;
+    border-color: var(--color-dark);
+}
+
+.quick-action-btnn.dark .action-icon {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.quick-action-btnn.dark:hover {
+    background: linear-gradient(135deg, #212121, var(--color-dark));
+    box-shadow: 0 8px 32px rgba(66, 66, 66, 0.4);
+}
+
+/* ===================================
+   EFFETS SPÉCIAUX ET ANIMATIONS
+   =================================== */
+
+/* Animation de pulsation pour l'icône bolt */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* Animation arc-en-ciel */
+@keyframes rainbow-slide {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+/* Animation d'apparition */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation pour les boutons */
+.quick-action-btn {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.quick-action-btnn:nth-child(1) { animation-delay: 0.1s; }
+.quick-action-btnn:nth-child(2) { animation-delay: 0.2s; }
+.quick-action-btnn:nth-child(3) { animation-delay: 0.3s; }
+.quick-action-btnn:nth-child(4) { animation-delay: 0.4s; }
+.quick-action-btnn:nth-child(5) { animation-delay: 0.5s; }
+.quick-action-btnn:nth-child(6) { animation-delay: 0.6s; }
+
+/* ===================================
+   RESPONSIVE DESIGN - TABLETTES
+   =================================== */
+@media (max-width: 768px) {
+    .quick-actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--spacing-md);
+    }
+    
+    .card-content {
+        padding: var(--spacing-lg);
+    }
+    
+    .card-header {
+        padding: var(--spacing-lg);
+    }
+    
+    .card-title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .quick-action-btnn {
+        min-height: 100px;
+        padding: var(--spacing-lg) var(--spacing-sm);
+    }
+    
+    .action-icon {
+        width: 50px;
+        height: 50px;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .action-icon i {
+        font-size: var(--font-size-xl);
+    }
+    
+    .action-text {
+        font-size: var(--font-size-xs);
+    }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - MOBILES
+   =================================== */
+@media (max-width: 480px) {
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    .card-content {
+        padding: var(--spacing-md);
+    }
+    
+    .card-header {
+        padding: var(--spacing-md);
+    }
+    
+    .card-title {
+        font-size: var(--font-size-lg);
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .quick-action-btnn {
+        min-height: 90px;
+        padding: var(--spacing-md) var(--spacing-xs);
+    }
+    
+    .action-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .action-icon i {
+        font-size: var(--font-size-lg);
+    }
+    
+    .action-text {
+        font-size: var(--font-size-xs);
+        line-height: 1.2;
+    }
+    
+    .quick-action-btnn:hover {
+        transform: translateY(-3px) scale(1.01);
+    }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - TRÈS PETITS ÉCRANS
+   =================================== */
+@media (max-width: 320px) {
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xs);
+    }
+    
+    .quick-action-btnn {
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        min-height: 60px;
+        padding: var(--spacing-sm);
+    }
+    
+    .action-icon {
+        width: 35px;
+        height: 35px;
+        margin-bottom: 0;
+        margin-right: var(--spacing-sm);
+        flex-shrink: 0;
+    }
+    
+    .action-icon i {
+        font-size: var(--font-size-base);
+    }
+    
+    .action-text {
+        font-size: var(--font-size-sm);
+        flex: 1;
+    }
+}
+
+/* ===================================
+   ACCESSIBILITÉ
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .quick-action-btnn:hover {
+        transform: none !important;
+    }
+    
+    .action-icon {
+        animation: none !important;
+    }
+}
+
+/* Focus visible pour l'accessibilité */
+.quick-action-btnn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ===================================
+   ÉTATS DÉSACTIVÉS
+   =================================== */
+.quick-action-btnn:disabled {
+    background: var(--color-disabled) !important;
+    color: white !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 0.6;
+}
+
+.quick-action-btnn:disabled:hover {
+    transform: none !important;
+    box-shadow: var(--shadow-card) !important;
+}
+
+.quick-action-btnn:disabled .action-icon {
+    transform: none !important;
+}
+
+/* ===================================
+   AMÉLIORATION DE L'EXPÉRIENCE UTILISATEUR
+   =================================== */
+
+/* Effet de ripple au clic */
+.quick-action-btnn {
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-action-btnn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.quick-action-btnn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Indicateur de chargement pour les actions asynchrones */
+.quick-action-btnn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.quick-action-btnn.loading .action-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Notifications de succès/erreur */
+.quick-action-btnn.success-flash {
+    animation: successFlash 0.6s ease;
+}
+
+.quick-action-btnn.error-flash {
+    animation: errorFlash 0.6s ease;
+}
+
+@keyframes successFlash {
+    0%, 100% { background: var(--color-success); }
+    50% { background: #81C784; box-shadow: 0 0 20px rgba(76, 175, 80, 0.6); }
+}
+
+@keyframes errorFlash {
+    0%, 100% { background: var(--color-danger); }
+    50% { background: #E57373; box-shadow: 0 0 20px rgba(229, 57, 53, 0.6); }
+}
+</style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <i class="fas fa-graduation-cap brand-icon"></i>
+                <span class="brand-text">EduManager</span>
+            </div>
+            <button id="sidebar-toggle" class="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="{% url 'dashboard' %}" class="nav-link">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        <span class="nav-text">Tableau de Bord</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'liste_etudiants' %}" class="nav-link">
+                        <i class="fas fa-user-graduate nav-icon"></i>
+                        <span class="nav-text">Étudiants</span>
+                        <span class="nav-badge">{{ total_etudiants }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'liste_classes' %}" class="nav-link">
+                        <i class="fas fa-chalkboard nav-icon"></i>
+                        <span class="nav-text">Classes</span>
+                        <span class="nav-badge">{{ total_classes }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'liste_matieres' %}" class="nav-link">
+                        <i class="fas fa-book nav-icon"></i>
+                        <span class="nav-text">Matières</span>
+                        <span class="nav-badge">{{ total_matieres }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'liste_notes' %}" class="nav-link">
+                        <i class="fas fa-clipboard-list nav-icon"></i>
+                        <span class="nav-text">Notes</span>
+                        <span class="nav-badge">{{ total_notes }}</span>
+                    </a>
+                </li>
+                <li class="nav-divider"></li>
+                <li class="nav-item">
+                    <a href="{% url 'importer_donnees' %}" class="nav-link">
+                        <i class="fas fa-file-import nav-icon"></i>
+                        <span class="nav-text">Import/Export</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'generation_bulletins' %}" class="nav-link">
+                        <i class="fas fa-file-pdf nav-icon"></i>
+                        <span class="nav-text">Bulletins</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                    <span class="user-role">Administrateur</span>
+                </div>
+                 <a href="{% url "ajouter_enseignant" %}" class="add-btn">
+                   <i class="fas fa-add-alt"></i>
+                 <span class="nav-text">Ajouter enseignant</span>
+            </a>
+            </div>
+           
+            <a href="{% url "deconnexion" %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button id="mobile-sidebar-toggle" class="mobile-sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Tableau de Bord</h1>
+            </div>
+            
+            <div class="top-bar-right">
+                <div class="search-box">
+                    <input type="text" id="global-search" class="search-input" placeholder="Rechercher...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <div class="notifications">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count"></span>
+                    </button>
+                </div>
+                
+                <div class="user-menu">
+                    <button class="user-menu-btn">
+                        <i class="fas fa-user-circle"></i>
+                        <span>{{ user.get_full_name|default:user.username }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <div class="welcome-card">
+                    <div class="welcome-content">
+                        <h2 class="welcome-title">Bienvenue, {{ user.get_full_name|default:user.username }} ! 👋</h2>
+                        <p class="welcome-subtitle">Voici un aperçu de votre établissement aujourd'hui</p>
+                    </div>
+                    <div class="welcome-stats">
+                        <div class="quick-stat">
+                            <div class="stat-icon success">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value"></span>
+                                <span class="stat-label">Taux de réussite</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Cards -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card primary" data-aos="fade-up" data-aos-delay="100">
+                        <div class="stat-icon-wrapper">
+                            <i class="fas fa-user-graduate stat-icon"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-count="{{ total_etudiants }}">0</h3>
+                            <p class="stat-label">Étudiants Actifs</p>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="stat-chart">
+                            <canvas id="students-chart" width="100" height="40"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="stat-card success" data-aos="fade-up" data-aos-delay="200">
+                        <div class="stat-icon-wrapper">
+                            <i class="fas fa-chalkboard stat-icon"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-count="{{ total_classes }}">0</h3>
+                            <p class="stat-label">Classes</p>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="stat-chart">
+                            <canvas id="classes-chart" width="100" height="40"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="stat-card warning" data-aos="fade-up" data-aos-delay="300">
+                        <div class="stat-icon-wrapper">
+                            <i class="fas fa-book stat-icon"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-count="{{ total_matieres }}">0</h3>
+                            <p class="stat-label">Matières</p>
+                            <div class="stat-trend neutral">
+                                <i class="fas fa-minus"></i>
+                                <span>Stable</span>
+                            </div>
+                        </div>
+                        <div class="stat-chart">
+                            <canvas id="subjects-chart" width="100" height="40"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="stat-card info" data-aos="fade-up" data-aos-delay="400">
+                        <div class="stat-icon-wrapper">
+                            <i class="fas fa-clipboard-check stat-icon"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-count="{{ total_notes }}">0</h3>
+                            <p class="stat-label">Notes Enregistrées</p>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+156 cette semaine</span>
+                            </div>
+                        </div>
+                        <div class="stat-chart">
+                            <canvas id="grades-chart" width="100" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts and Recent Activity -->
+            <section class="analytics-section">
+                <div class="analytics-grid">
+                    <!-- Performance Chart -->
+                    <div class="chart-card" data-aos="fade-up" data-aos-delay="500">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-area"></i>
+                                Performance Globale
+                            </h3>
+                            <div class="card-actions">
+                                <select id="performance-period" class="period-selector">
+                                    <option value="week">Cette semaine</option>
+                                    <option value="month" selected>Ce mois</option>
+                                    <option value="year">Cette année</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <canvas id="performance-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Students -->
+                    <div class="recent-card" data-aos="fade-up" data-aos-delay="600">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-user-plus"></i>
+                                Nouveaux Étudiants
+                            </h3>
+                            <span class="card-badge">{{ etudiants_recents|length }}</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="recent-list">
+                                {% for etudiant in etudiants_recents %}
+                                <div class="recent-item">
+                                    <div class="item-avatar">
+                                        <img src="https://ui-avatars.com/api/?name={{ etudiant.nom }}+{{ etudiant.prenom }}&background=random&color=fff" alt="{{ etudiant.nom_complet }}">
+                                    </div>
+                                    <div class="item-info">
+                                        <h4 class="item-name">{{ etudiant.nom_complet }}</h4>
+                                        <p class="item-details">{{ etudiant.classe.nom }} • {{ etudiant.numero_etudiant }}</p>
+                                        <span class="item-time">{{ etudiant.date_inscription|timesince }}</span>
+                                    </div>
+                                    <div class="item-actions">
+                                        <a href="{% url 'detail_etudiant' etudiant.pk %}" class="action-btn view">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="empty-state">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>Aucun nouvel étudiant</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Notes Activity -->
+            <section class="activity-section">
+                <div class="activity-card" data-aos="fade-up" data-aos-delay="700">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-history"></i>
+                            Activité Récente des Notes
+                        </h3>
+                        <div class="card-actions">
+                            <button class="refresh-btn" id="refresh-activity">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="activity-timeline">
+                            {% for note in notes_recentes %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker {% cycle 'primary' 'success' 'warning' 'info' %}">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <h4 class="timeline-title">{{ note.etudiant.nom_complet }}</h4>
+                                        <span class="timeline-time">{{ note.date_saisie|timesince }}</span>
+                                    </div>
+                                    <p class="timeline-description">
+                                        <strong>{{ note.matiere.nom }}</strong> • 
+                                        Note: <span class="note-value {% if note.note_sur_vingt >= 16 %}excellent{% elif note.note_sur_vingt >= 12 %}good{% elif note.note_sur_vingt >= 10 %}average{% else %}poor{% endif %}">{{ note.note }}/{{ note.note_sur }}</span>
+                                    </p>
+                                    <div class="timeline-meta">
+                                        <span class="meta-tag">{{ note.type_evaluation }}</span>
+                                        <span class="meta-tag">{{ note.semestre }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="fas fa-clipboard"></i>
+                                <p>Aucune activité récente</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions-section">
+                <div class="quick-actions-card" data-aos="fade-up" data-aos-delay="800">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-bolt"></i>
+                            Actions Rapides
+                        </h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="quick-actions-grid">
+                            <a href="{% url 'ajouter_etudiant' %}" class="quick-action-btnn primary">
+                                <div class="action-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <span class="action-text">Nouvel Étudiant</span>
+                            </a>
+                            
+                            <a href="{% url 'ajouter_classe' %}" class="quick-action-btnn success">
+                                <div class="action-icon">
+                                    <i class="fas fa-chalkboard"></i>
+                                </div>
+                                <span class="action-text">Nouvelle Classe</span>
+                            </a>
+                            
+                            <a href="{% url 'saisie_rapide_notes' %}" class="quick-action-btnn warning">
+                                <div class="action-icon">
+                                    <i class="fas fa-edit"></i>
+                                </div>
+                                <span class="action-text">Saisie Notes</span>
+                            </a>
+                            
+                            <a href="{% url 'generation_bulletins' %}" class="quick-action-btnn info">
+                                <div class="action-icon">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <span class="action-text">Bulletins</span>
+                            </a>
+                            
+                            <a href="{% url 'importer_donnees' %}" class="quick-action-btnn danger">
+                                <div class="action-icon">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <span class="action-text">Import Données</span>
+                            </a>
+                            
+                           
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Chargement...</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Counter Animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number[data-count]');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-count'));
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        counter.textContent = target;
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 16);
+            });
+        }
+
+        // Initialize charts and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            animateCounters();
+            
+            // Initialize mini charts
+            initMiniCharts();
+            
+            // Initialize main performance chart
+            initPerformanceChart();
+        });
+
+        function initMiniCharts() {
+            // Mini chart configurations
+            const chartConfigs = [
+                { id: 'students-chart', color: '#3b82f6', data: [10, 15, 12, 18, 22, 25, 30] },
+                { id: 'classes-chart', color: '#10b981', data: [5, 6, 5, 7, 8, 8, 9] },
+                { id: 'subjects-chart', color: '#f59e0b', data: [12, 12, 13, 13, 14, 14, 15] },
+                { id: 'grades-chart', color: '#06b6d4', data: [100, 150, 120, 180, 220, 250, 300] }
+            ];
+
+            chartConfigs.forEach(config => {
+                const ctx = document.getElementById(config.id);
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['', '', '', '', '', '', ''],
+                            datasets: [{
+                                data: config.data,
+                                borderColor: config.color,
+                                backgroundColor: config.color + '20',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { display: false },
+                                y: { display: false }
+                            },
+                            elements: { point: { radius: 0 } }
+                        }
+                    });
+                }
+            });
+        }
+
+        function initPerformanceChart() {
+            const ctx = document.getElementById('performance-chart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                        datasets: [{
+                            label: 'Notes saisies',
+                            data: [12, 19, 15, 25, 22, 18, 8],
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 1,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+        }
+
+
+
+    </script>
+
+    <script>
+        // ==================== VARIABLES GLOBALES ====================
+let sidebarCollapsed = false;
+let isMobile = window.innerWidth <= 768;
+
+// ==================== INITIALISATION ====================
+document.addEventListener('DOMContentLoaded', function() {
+    initSidebar();
+    initMobileMenu();
+    initSearch();
+    initNotifications();
+    initCharts();
+    initRefreshButtons();
+    initQuickActions();
+    updateDateTime();
+    
+    // Mise à jour responsive
+    window.addEventListener('resize', handleResize);
+});
+
+// ==================== GESTION SIDEBAR ====================
+function initSidebar() {
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', function() {
+            toggleSidebar();
+        });
+    }
+}
+
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (sidebar) {
+        sidebarCollapsed = !sidebarCollapsed;
+        sidebar.classList.toggle('collapsed', sidebarCollapsed);
+        
+        // Sauvegarder l'état
+        localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
+    }
+}
+
+// ==================== MENU MOBILE ====================
+function initMobileMenu() {
+    const mobileToggle = document.querySelector('.mobile-sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (mobileToggle && sidebar) {
+        // Créer l'overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+        
+        mobileToggle.addEventListener('click', function() {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Fermer avec overlay
+        overlay.addEventListener('click', function() {
+            closeMobileSidebar();
+        });
+        
+        // Fermer avec ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeMobileSidebar();
+            }
+        });
+    }
+}
+
+function closeMobileSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar && overlay) {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// ==================== RECHERCHE ====================
+function initSearch() {
+    const searchInput = document.querySelector('.search-input');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value;
+            
+            if (query.length > 2) {
+                // Simulation de recherche
+                console.log('Recherche:', query);
+                showSearchResults(query);
+            }
+        });
+        
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch(e.target.value);
+            }
+        });
+    }
+}
+
+function showSearchResults(query) {
+    // Simulation d'affichage des résultats
+    console.log(`Affichage des résultats pour: ${query}`);
+}
+
+function performSearch(query) {
+    if (query.trim()) {
+        console.log(`Recherche effectuée: ${query}`);
+        // Redirection ou affichage des résultats
+    }
+}
+
+// ==================== NOTIFICATIONS ====================
+function initNotifications() {
+    const notificationBtn = document.querySelector('.notification-btn');
+    
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', function() {
+            toggleNotifications();
+        });
+    }
+    
+    // Simuler nouvelles notifications
+    setInterval(updateNotificationCount, 30000);
+}
+
+function toggleNotifications() {
+    console.log('Ouverture du panneau de notifications');
+    // Ici vous pouvez ajouter la logique d'affichage des notifications
+}
+
+function updateNotificationCount() {
+    const badge = document.querySelector('.notification-count');
+    if (badge) {
+        const currentCount = parseInt(badge.textContent) || 0;
+        const newCount = Math.max(0, currentCount + Math.floor(Math.random() * 3) - 1);
+        badge.textContent = newCount;
+        badge.style.display = newCount > 0 ? 'block' : 'none';
+    }
+}
+
+// ==================== GRAPHIQUES ====================
+function initCharts() {
+    // Simulation de données pour les graphiques
+    const chartData = {
+        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'],
+        datasets: [{
+            label: 'Étudiants',
+            data: [120, 135, 145, 160, 155, 170],
+            borderColor: '#1E88E5',
+            backgroundColor: 'rgba(30, 136, 229, 0.1)',
+            tension: 0.4
+        }]
+    };
+    
+    // Si vous utilisez Chart.js (à ajouter en CDN)
+    const chartCanvas = document.querySelector('#mainChart');
+    if (chartCanvas && typeof Chart !== 'undefined') {
+        new Chart(chartCanvas, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+}
+
+// ==================== BOUTONS REFRESH ====================
+function initRefreshButtons() {
+    const refreshBtns = document.querySelectorAll('.refresh-btn');
+    
+    refreshBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            refreshData(this);
+        });
+    });
+}
+
+function refreshData(button) {
+    button.style.transform = 'rotate(360deg)';
+    showLoading(true);
+    
+    // Simulation de rechargement
+    setTimeout(() => {
+        button.style.transform = '';
+        showLoading(false);
+        console.log('Données actualisées');
+    }, 1500);
+}
+
+// ==================== ACTIONS RAPIDES ====================
+function initQuickActions() {
+    const quickActions = document.querySelectorAll('.quick-action-btn');
+    
+    quickActions.forEach(action => {
+        action.addEventListener('click', function(e) {
+            e.preventDefault();
+            const actionType = this.dataset.action;
+            executeQuickAction(actionType);
+        });
+    });
+}
+
+function executeQuickAction(actionType) {
+    console.log(`Action rapide: ${actionType}`);
+    
+    switch(actionType) {
+        case 'add-student':
+            console.log('Ouverture formulaire ajout étudiant');
+            break;
+        case 'add-course':
+            console.log('Ouverture formulaire ajout cours');
+            break;
+        case 'schedule':
+            console.log('Ouverture planificateur');
+            break;
+        case 'reports':
+            console.log('Génération des rapports');
+            break;
+        default:
+            console.log('Action non définie');
+    }
+}
+
+// ==================== LOADING ====================
+function showLoading(show) {
+    let overlay = document.querySelector('.loading-overlay');
+    
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = `
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <div>Chargement...</div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+    
+    overlay.classList.toggle('active', show);
+}
+
+// ==================== DATE & HEURE ====================
+function updateDateTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('fr-FR', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    const dateStr = now.toLocaleDateString('fr-FR');
+    
+    // Mettre à jour si les éléments existent
+    const timeElement = document.querySelector('.current-time');
+    const dateElement = document.querySelector('.current-date');
+    
+    if (timeElement) timeElement.textContent = timeStr;
+    if (dateElement) dateElement.textContent = dateStr;
+    
+    // Actualiser chaque minute
+    setTimeout(updateDateTime, 60000);
+}
+
+// ==================== GESTION RESPONSIVE ====================
+function handleResize() {
+    const wasMobile = isMobile;
+    isMobile = window.innerWidth <= 768;
+    
+    if (wasMobile !== isMobile) {
+        if (isMobile) {
+            // Passage en mobile
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.remove('active');
+            }
+            closeMobileSidebar();
+        } else {
+            // Passage en desktop
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.remove('active');
+                const wasCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                sidebar.classList.toggle('collapsed', wasCollapsed);
+                sidebarCollapsed = wasCollapsed;
+            }
+            closeMobileSidebar();
+        }
+    }
+}
+
+// ==================== ANIMATIONS & INTERACTIONS ====================
+function animateStats() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    
+    statNumbers.forEach(stat => {
+        const target = parseInt(stat.textContent);
+        const increment = target / 50;
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            stat.textContent = Math.floor(current);
+        }, 30);
+    });
+}
+
+// ==================== UTILITAIRES ====================
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+
+// ==================== GESTION DES ERREURS ====================
+window.addEventListener('error', function(e) {
+    console.error('Erreur JavaScript:', e.error);
+});
+
+// ==================== PERFORMANCE ====================
+// Debounce pour les événements fréquents
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Version debounced du resize
+const debouncedResize = debounce(handleResize, 250);
+window.addEventListener('resize', debouncedResize);
+    </script>
+</body>
+</html>

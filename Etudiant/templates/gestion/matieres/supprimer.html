@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supprimer une Matière</title>
+    <style>
+        /* Styles spécifiques pour la suppression de matière */
+:root {
+    /* Réutilisation de la palette existante */
+    --color-primary: #1E88E5;
+    --color-secondary: #43A047;
+    --color-danger: #E53935;
+    --color-warning: #FB8C00;
+    --color-background: #F5F7FA;
+    --color-surface: #FFFFFF;
+    --color-text: #212121;
+    --color-text-muted: #616161;
+    --color-disabled: #BDBDBD;
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --border-radius: 8px;
+    
+    /* Nouvelles variables pour cette page */
+    --color-danger-light: #FFEBEE;
+    --color-warning-light: #FFF3E0;
+}
+
+/* Structure principale */
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 20px;
+}
+
+/* En-tête */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.page-title {
+    color: var(--color-danger);
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-danger);
+    border-radius: 2px;
+}
+
+/* Contenu principal */
+.content {
+    background-color: var(--color-surface);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-card);
+}
+
+/* Messages */
+.messages {
+    margin-bottom: 1.5rem;
+}
+
+.message {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.message::before {
+    content: '!';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+.message-error {
+    background-color: var(--color-danger-light);
+    color: var(--color-danger);
+    border-left: 4px solid var(--color-danger);
+}
+
+.message-success {
+    background-color: var(--color-secondary-light);
+    color: var(--color-secondary);
+    border-left: 4px solid var(--color-secondary);
+}
+
+.message-warning {
+    background-color: var(--color-warning-light);
+    color: var(--color-warning);
+    border-left: 4px solid var(--color-warning);
+}
+
+/* Avertissement de suppression */
+.delete-warning {
+    background-color: var(--color-warning-light);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--color-warning);
+    margin-bottom: 2rem;
+}
+
+.warning-title {
+    color: var(--color-warning);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.warning-message {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--color-text);
+}
+
+/* Détails de la matière */
+.matiere-details {
+    background-color: #F9F9F9;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+}
+
+.matiere-title {
+    color: var(--color-primary);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.matiere-info p {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+}
+
+.matiere-info strong {
+    color: var(--color-text);
+    min-width: 120px;
+    display: inline-block;
+}
+
+.statut-actif {
+    color: var(--color-secondary);
+    font-weight: 500;
+}
+
+.statut-inactif {
+    color: var(--color-danger);
+    font-weight: 500;
+}
+
+/* Actions de suppression */
+.delete-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.delete-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Boutons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1rem;
+    min-width: 150px;
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #C62828;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+.btn-secondary {
+    background-color: var(--color-text-muted);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #757575;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .content {
+        padding: 1.5rem;
+    }
+    
+    .delete-form {
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.6rem;
+    }
+    
+    .warning-title {
+        font-size: 1.3rem;
+    }
+    
+    .matiere-info strong {
+        min-width: 100px;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header class="page-header" id="page-header">
+            <h1 class="page-title" id="page-title">Supprimer la Matière</h1>
+            <div class="header-actions" id="header-actions">
+                <a href="{% url 'liste_matieres' %}" class="btn btn-secondary" id="btn-retour">Retour à la Liste</a>
+            </div>
+        </header>
+
+        <main class="content" id="main-content">
+            <!-- Messages -->
+            {% if messages %}
+                <div class="messages" id="messages">
+                    {% for message in messages %}
+                        <div class="message message-{{ message.tags }}" id="message-{{ forloop.counter }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Confirmation de suppression -->
+            <div class="delete-container" id="delete-container">
+                <div class="delete-warning" id="delete-warning">
+                    <h2 class="warning-title" id="warning-title">Attention !</h2>
+                    <p class="warning-message" id="warning-message">
+                        Êtes-vous sûr de vouloir supprimer cette matière ?
+                    </p>
+                </div>
+
+                <div class="matiere-details" id="matiere-details">
+                    <h3 class="matiere-title" id="matiere-title">Détails de la matière :</h3>
+                    <div class="matiere-info" id="matiere-info">
+                        <p class="matiere-nom" id="matiere-nom"><strong>Nom :</strong> {{ matiere.nom }}</p>
+                        <p class="matiere-code" id="matiere-code"><strong>Code :</strong> {{ matiere.code }}</p>
+                        <p class="matiere-coefficient" id="matiere-coefficient"><strong>Coefficient :</strong> {{ matiere.coefficient }}</p>
+                        {% if matiere.description %}
+                            <p class="matiere-description" id="matiere-description"><strong>Description :</strong> {{ matiere.description }}</p>
+                        {% endif %}
+                        {% if matiere.enseignant %}
+                            <p class="matiere-enseignant" id="matiere-enseignant">
+                                <strong>Enseignant :</strong> {{ matiere.enseignant.first_name }} {{ matiere.enseignant.last_name }}
+                            </p>
+                        {% else %}
+                            <p class="matiere-enseignant" id="matiere-enseignant"><strong>Enseignant :</strong> Non assigné</p>
+                        {% endif %}
+                        <p class="matiere-statut" id="matiere-statut">
+                            <strong>Statut :</strong>
+                            {% if matiere.actif %}
+                                <span class="statut-actif">Active</span>
+                            {% else %}
+                                <span class="statut-inactif">Inactive</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="delete-actions" id="delete-actions">
+                    <form method="post" class="delete-form" id="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" id="btn-confirm-delete">
+                            Oui, Supprimer
+                        </button>
+                        <a href="{% url 'liste_matieres' %}" class="btn btn-secondary" id="btn-cancel">
+                            Annuler
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

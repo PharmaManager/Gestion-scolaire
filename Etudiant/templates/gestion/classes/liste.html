@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Classes</title>
+    <style>
+        /* ===== VARIABLES CSS - PALETTE DE COULEURS ===== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-focus: 0 0 0 3px rgba(30, 136, 229, 0.2);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 2.5rem;
+    
+    /* Typographie */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+    --transition-slow: 0.5s ease-in-out;
+}
+
+/* ===== RESET ET BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E8F4F8 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    font-size: var(--font-size-base);
+}
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    min-height: 100vh;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== HEADER ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg) 0;
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+.page-title {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    position: relative;
+    display: inline-block;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 2px;
+}
+
+/* ===== ACTIONS HEADER ===== */
+.header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+/* ===== LISTE DES CLASSES ===== */
+.classes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* ===== ITEM DE CLASSE ===== */
+.classe-item {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+    animation: slideInUp 0.4s ease-out;
+    animation-fill-mode: both;
+    border-left: 4px solid var(--color-primary);
+}
+
+.classe-item:nth-child(1) { animation-delay: 0.1s; }
+.classe-item:nth-child(2) { animation-delay: 0.2s; }
+.classe-item:nth-child(3) { animation-delay: 0.3s; }
+.classe-item:nth-child(4) { animation-delay: 0.4s; }
+.classe-item:nth-child(5) { animation-delay: 0.5s; }
+.classe-item:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.classe-item:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
+}
+
+.classe-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-warning));
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.classe-item:hover::before {
+    opacity: 1;
+}
+
+/* ===== INFORMATIONS DE LA CLASSE ===== */
+.classe-info {
+    margin-bottom: var(--spacing-md);
+}
+
+.classe-nom {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.classe-nom::before {
+    content: '🎓';
+    font-size: var(--font-size-lg);
+}
+
+.classe-niveau {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.classe-niveau::before {
+    content: '📚';
+    font-size: var(--font-size-base);
+}
+
+.classe-annee {
+    font-size: var(--font-size-base);
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: 500;
+}
+
+.classe-annee::before {
+    content: '📅';
+    font-size: var(--font-size-base);
+}
+
+.classe-etudiants {
+    font-size: var(--font-size-base);
+    color: var(--color-secondary);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: 600;
+    background: rgba(67, 160, 71, 0.1);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    width: fit-content;
+}
+
+.classe-etudiants::before {
+    content: '👥';
+    font-size: var(--font-size-base);
+}
+
+.classe-date {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.classe-date::before {
+    content: '🕒';
+    font-size: var(--font-size-sm);
+}
+
+/* ===== ACTIONS DE LA CLASSE ===== */
+.classe-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* ===== BOUTONS ===== */
+.btn {
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    min-height: 40px;
+    text-align: center;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-normal);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+/* Bouton primaire (Header) */
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #1565C0 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-base);
+    min-height: 48px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1565C0 0%, var(--color-primary) 100%);
+    box-shadow: 0 6px 20px rgba(30, 136, 229, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Bouton secondaire (Header) */
+.btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    border: 2px solid var(--color-disabled);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-base);
+    min-height: 48px;
+}
+
+.btn-secondary:hover {
+    background: var(--color-background);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* Bouton d'avertissement (Modifier) */
+.btn-warning {
+    background: linear-gradient(135deg, var(--color-warning) 0%, #F57C00 100%);
+    color: white;
+    box-shadow: 0 3px 12px rgba(251, 140, 0, 0.3);
+    flex: 1;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #F57C00 0%, var(--color-warning) 100%);
+    box-shadow: 0 4px 16px rgba(251, 140, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Bouton de danger (Supprimer) */
+.btn-danger {
+    background: linear-gradient(135deg, var(--color-danger) 0%, #C62828 100%);
+    color: white;
+    box-shadow: 0 3px 12px rgba(229, 57, 53, 0.3);
+    flex: 1;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #C62828 0%, var(--color-danger) 100%);
+    box-shadow: 0 4px 16px rgba(229, 57, 53, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* ===== PAGINATION ===== */
+.pagination-nav {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    animation: fadeInUp 0.4s ease-out 0.3s both;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+.page-item {
+    display: flex;
+}
+
+.page-link {
+    padding: var(--spacing-sm) var(--spacing-md);
+    text-decoration: none;
+    color: var(--color-text-muted);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    min-width: 44px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-link:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+}
+
+.page-item.current .page-link {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: white;
+    font-weight: 700;
+    border-color: var(--color-primary);
+    box-shadow: 0 3px 10px rgba(30, 136, 229, 0.3);
+}
+
+/* ===== MESSAGE AUCUNE CLASSE ===== */
+.no-classes {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-top: var(--spacing-xl);
+    animation: fadeInUp 0.4s ease-out;
+}
+
+.no-classes-message {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-muted);
+    font-style: italic;
+    position: relative;
+    display: inline-block;
+}
+
+.no-classes-message::before {
+    content: '📚';
+    display: block;
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablettes */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+        padding: var(--spacing-lg);
+    }
+    
+    .page-title {
+        font-size: var(--font-size-2xl);
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .classes-list {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .classe-actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* Smartphones */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-xs);
+    }
+    
+    .page-header {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .page-title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        padding: var(--spacing-md);
+        font-size: var(--font-size-base);
+    }
+    
+    .classe-item {
+        padding: var(--spacing-md);
+        margin: 0 var(--spacing-xs);
+    }
+    
+    .classe-nom {
+        font-size: var(--font-size-lg);
+    }
+    
+    .classe-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .btn-warning,
+    .btn-danger {
+        width: 100%;
+        padding: var(--spacing-sm);
+    }
+    
+    .pagination-nav {
+        padding: var(--spacing-md);
+    }
+    
+    .page-link {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Très petits écrans */
+@media (max-width: 320px) {
+    .page-title {
+        font-size: var(--font-size-lg);
+    }
+    
+    .classe-item {
+        padding: var(--spacing-sm);
+    }
+    
+    .classe-nom {
+        font-size: var(--font-size-base);
+    }
+    
+    .classe-niveau,
+    .classe-annee,
+    .classe-etudiants {
+        font-size: var(--font-size-sm);
+    }
+    
+    .btn {
+        font-size: var(--font-size-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+}
+
+/* ===== AMÉLIORATION DE L'ACCESSIBILITÉ ===== */
+
+/* Focus visible amélioré */
+.btn:focus-visible,
+.page-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Réduction des animations pour les utilisateurs sensibles */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== ÉTATS SPÉCIAUX ===== */
+
+/* Effet de survol pour les cartes de classe */
+.classe-item:hover .classe-nom {
+    color: var(--color-secondary);
+}
+
+.classe-item:hover .classe-etudiants {
+    background: rgba(67, 160, 71, 0.2);
+    transform: scale(1.02);
+}
+
+/* États désactivés */
+.btn:disabled {
+    background: var(--color-disabled) !important;
+    color: white !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.btn:disabled::before {
+    display: none;
+}
+
+/* ===== MODE SOMBRE (OPTIONNEL) ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #121212;
+        --color-surface: #1E1E1E;
+        --color-text: #E0E0E0;
+        --color-text-muted: #A0A0A0;
+        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    body {
+        background: linear-gradient(135deg, var(--color-background) 0%, #1A1A1A 100%);
+    }
+    
+    .classe-item {
+        border-left-color: var(--color-primary);
+    }
+    
+    .classe-actions {
+        border-top-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* ===== ANIMATIONS SUPPLÉMENTAIRES ===== */
+
+/* Animation de chargement pour les nouvelles cartes */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.classe-item.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Animation pour les notifications */
+@keyframes slideInFromTop {
+    from {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.notification {
+    animation: slideInFromTop 0.4s ease-out;
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header class="page-header" id="page-header">
+            <h1 class="page-title" id="page-title">Liste des Classes</h1>
+            <div class="header-actions" id="header-actions">
+                <a href="{% url 'ajouter_classe' %}" class="btn btn-primary" id="btn-ajouter">Ajouter une Classe</a>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary" id="btn-retour">Retour</a>
+            </div>
+        </header>
+
+        <main class="content" id="main-content">
+            {% if page_obj %}
+                <div class="classes-list" id="classes-list">
+                    {% for classe in page_obj %}
+                        <div class="classe-item" id="classe-{{ classe.id }}">
+                            <div class="classe-info" id="classe-info-{{ classe.id }}">
+                                <h3 class="classe-nom" id="classe-nom-{{ classe.id }}">{{ classe.nom }}</h3>
+                                <p class="classe-niveau" id="classe-niveau-{{ classe.id }}">{{ classe.niveau }}</p>
+                                <p class="classe-annee" id="classe-annee-{{ classe.id }}">{{ classe.annee_scolaire }}</p>
+                                <p class="classe-etudiants" id="classe-etudiants-{{ classe.id }}">{{ classe.nb_etudiants }} étudiant(s) actif(s)</p>
+                                <p class="classe-date" id="classe-date-{{ classe.id }}">Créée le : {{ classe.date_creation|date:"d/m/Y à H:i" }}</p>
+                            </div>
+                            <div class="classe-actions" id="classe-actions-{{ classe.id }}">
+                                <a href="{% url 'modifier_classe' classe.pk %}" class="btn btn-warning" id="btn-modifier-{{ classe.id }}">Modifier</a>
+                                <a href="{% url 'supprimer_classe' classe.pk %}" class="btn btn-danger" id="btn-supprimer-{{ classe.id }}">Supprimer</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <nav class="pagination-nav" id="pagination-nav">
+                        <ul class="pagination" id="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item" id="page-prev">
+                                    <a class="page-link" href="?page=1" id="page-first">Première</a>
+                                </li>
+                                <li class="page-item" id="page-previous">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" id="page-prev-link">Précédente</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item current" id="page-current">
+                                <span class="page-link" id="current-page-info">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item" id="page-next">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" id="page-next-link">Suivante</a>
+                                </li>
+                                <li class="page-item" id="page-last">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" id="page-last-link">Dernière</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="no-classes" id="no-classes">
+                    <p class="no-classes-message" id="no-classes-message">Aucune classe trouvée.</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

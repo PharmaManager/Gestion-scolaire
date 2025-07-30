@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une Classe</title>
+    <style>
+        /* ===== VARIABLES CSS - PALETTE DE COULEURS ===== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-focus: 0 0 0 3px rgba(30, 136, 229, 0.2);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 2.5rem;
+    
+    /* Typographie */
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+}
+
+/* ===== RESET ET BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E8F4F8 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    font-size: var(--font-size-base);
+}
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== HEADER ===== */
+.page-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg) 0;
+}
+
+.page-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    position: relative;
+    display: inline-block;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 2px;
+}
+
+/* ===== MESSAGES ===== */
+.messages {
+    margin-bottom: var(--spacing-lg);
+}
+
+.message {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    animation: slideInRight 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.message::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: currentColor;
+}
+
+.message-success {
+    background: rgba(67, 160, 71, 0.1);
+    color: var(--color-secondary);
+    border: 1px solid rgba(67, 160, 71, 0.2);
+}
+
+.message-error {
+    background: rgba(229, 57, 53, 0.1);
+    color: var(--color-danger);
+    border: 1px solid rgba(229, 57, 53, 0.2);
+}
+
+.message-warning {
+    background: rgba(251, 140, 0, 0.1);
+    color: var(--color-warning);
+    border: 1px solid rgba(251, 140, 0, 0.2);
+}
+
+.message-info {
+    background: rgba(30, 136, 229, 0.1);
+    color: var(--color-primary);
+    border: 1px solid rgba(30, 136, 229, 0.2);
+}
+
+/* ===== CONTENEUR DU FORMULAIRE ===== */
+.form-container {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-xl);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.form-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* ===== FORMULAIRE ===== */
+.classe-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* ===== ERREURS GÉNÉRALES ===== */
+.form-errors {
+    background: rgba(229, 57, 53, 0.1);
+    color: var(--color-danger);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(229, 57, 53, 0.2);
+    font-size: var(--font-size-sm);
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* ===== GROUPES DE CHAMPS ===== */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    animation: fadeInUp 0.4s ease-out;
+    animation-fill-mode: both;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+
+/* ===== LABELS ===== */
+.form-label {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-xs);
+    position: relative;
+    transition: color var(--transition-fast);
+}
+
+.form-label::after {
+    content: ' *';
+    color: var(--color-danger);
+    font-weight: 500;
+}
+
+/* ===== CHAMPS DE SAISIE ===== */
+.form-group input,
+.form-group select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid var(--color-disabled);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: all var(--transition-fast);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus), inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+.form-group input:hover,
+.form-group select:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(30, 136, 229, 0.1);
+}
+
+/* ===== ÉTAT D'ERREUR POUR LES CHAMPS ===== */
+.form-group input.error,
+.form-group select.error {
+    border-color: var(--color-danger);
+    background: rgba(229, 57, 53, 0.05);
+}
+
+.form-group input.error:focus,
+.form-group select.error:focus {
+    box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2);
+}
+
+/* ===== ERREURS DE CHAMPS ===== */
+.field-errors {
+    color: var(--color-danger);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    margin-top: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.field-errors::before {
+    content: '⚠';
+    font-size: var(--font-size-base);
+}
+
+/* ===== TEXTE D'AIDE ===== */
+.form-help {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    font-style: italic;
+    margin-top: var(--spacing-xs);
+}
+
+/* ===== ACTIONS DU FORMULAIRE ===== */
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    animation: fadeInUp 0.4s ease-out 0.4s both;
+}
+
+/* ===== BOUTONS ===== */
+.btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    min-height: 48px;
+    flex: 1;
+    text-align: center;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-normal);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #1565C0 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(30, 136, 229, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1565C0 0%, var(--color-primary) 100%);
+    box-shadow: 0 6px 20px rgba(30, 136, 229, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(30, 136, 229, 0.3);
+}
+
+.btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    border: 2px solid var(--color-disabled);
+    box-shadow: var(--shadow-card);
+}
+
+.btn-secondary:hover {
+    background: var(--color-background);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablettes */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-sm);
+        max-width: 100%;
+    }
+    
+    .form-container {
+        padding: var(--spacing-lg);
+        margin: 0 var(--spacing-xs);
+    }
+    
+    .page-title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+
+/* Smartphones */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-xs);
+    }
+    
+    .form-container {
+        padding: var(--spacing-md);
+        margin: 0;
+        border-radius: var(--border-radius);
+    }
+    
+    .page-header {
+        margin-bottom: var(--spacing-lg);
+        padding: var(--spacing-md) 0;
+    }
+    
+    .page-title {
+        font-size: var(--font-size-lg);
+    }
+    
+    .form-group input,
+    .form-group select {
+        padding: var(--spacing-md);
+        font-size: var(--font-size-base);
+        min-height: 48px; /* Améliore l'accessibilité tactile */
+    }
+    
+    .btn {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: var(--font-size-base);
+        min-height: 52px; /* Boutons plus grands pour mobile */
+    }
+    
+    .form-actions {
+        margin-top: var(--spacing-md);
+    }
+}
+
+/* Très petits écrans */
+@media (max-width: 320px) {
+    .form-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .page-title {
+        font-size: var(--font-size-base);
+    }
+    
+    .form-group input,
+    .form-group select,
+    .btn {
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* ===== AMÉLIORATION DE L'ACCESSIBILITÉ ===== */
+
+/* Focus visible amélioré */
+.btn:focus-visible,
+.form-group input:focus-visible,
+.form-group select:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Réduction des animations pour les utilisateurs sensibles */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== ÉTATS SPÉCIAUX ===== */
+
+/* Loading state pour le bouton de soumission */
+.btn-primary:disabled {
+    background: var(--color-disabled);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-primary:disabled::before {
+    display: none;
+}
+
+/* Mode sombre (optionnel) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #121212;
+        --color-surface: #1E1E1E;
+        --color-text: #E0E0E0;
+        --color-text-muted: #A0A0A0;
+        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    body {
+        background: linear-gradient(135deg, var(--color-background) 0%, #1A1A1A 100%);
+    }
+    
+    .form-group input,
+    .form-group select {
+        background: var(--color-surface);
+        border-color: #333;
+        color: var(--color-text);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header class="page-header" id="page-header">
+            <h1 class="page-title" id="page-title">Ajouter une Classe</h1>
+        </header>
+
+        <main class="content" id="main-content">
+            <!-- Messages -->
+            {% if messages %}
+                <div class="messages" id="messages">
+                    {% for message in messages %}
+                        <div class="message message-{{ message.tags }}" id="message-{{ forloop.counter }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Formulaire -->
+            <div class="form-container" id="form-container">
+                <form method="post" class="classe-form" id="classe-form">
+                    {% csrf_token %}
+                    
+                    <!-- Erreurs générales du formulaire -->
+                    {% if form.non_field_errors %}
+                        <div class="form-errors" id="form-errors">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Champ Nom -->
+                    <div class="form-group" id="form-group-nom">
+                        <label for="{{ form.nom.id_for_label }}" class="form-label" id="label-nom">{{ form.nom.label }}</label>
+                        {{ form.nom }}
+                        {% if form.nom.errors %}
+                            <div class="field-errors" id="errors-nom">
+                                {{ form.nom.errors }}
+                            </div>
+                        {% endif %}
+                        {% if form.nom.help_text %}
+                            <small class="form-help" id="help-nom">{{ form.nom.help_text }}</small>
+                        {% endif %}
+                    </div>
+
+                    <!-- Champ Niveau -->
+                    <div class="form-group" id="form-group-niveau">
+                        <label for="{{ form.niveau.id_for_label }}" class="form-label" id="label-niveau">{{ form.niveau.label }}</label>
+                        {{ form.niveau }}
+                        {% if form.niveau.errors %}
+                            <div class="field-errors" id="errors-niveau">
+                                {{ form.niveau.errors }}
+                            </div>
+                        {% endif %}
+                        {% if form.niveau.help_text %}
+                            <small class="form-help" id="help-niveau">{{ form.niveau.help_text }}</small>
+                        {% endif %}
+                    </div>
+
+                    <!-- Champ Année scolaire -->
+                    <div class="form-group" id="form-group-annee">
+                        <label for="{{ form.annee_scolaire.id_for_label }}" class="form-label" id="label-annee">{{ form.annee_scolaire.label }}</label>
+                        {{ form.annee_scolaire }}
+                        {% if form.annee_scolaire.errors %}
+                            <div class="field-errors" id="errors-annee">
+                                {{ form.annee_scolaire.errors }}
+                            </div>
+                        {% endif %}
+                        {% if form.annee_scolaire.help_text %}
+                            <small class="form-help" id="help-annee">{{ form.annee_scolaire.help_text }}</small>
+                        {% endif %}
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="form-actions" id="form-actions">
+                        <button type="submit" class="btn btn-primary" id="btn-submit">Ajouter la Classe</button>
+                        <a href="{% url 'liste_classes' %}" class="btn btn-secondary" id="btn-cancel">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

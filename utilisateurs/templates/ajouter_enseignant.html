@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter un enseignant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tu peux relier ton fichier CSS ici -->
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ===== VARIABLES CSS - PALETTE DE COULEURS ===== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-button: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-form: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Couleurs de validation */
+    --color-success: #4CAF50;
+    --color-error: #F44336;
+    --color-focus: rgba(30, 136, 229, 0.15);
+}
+
+/* ===== RESET ET BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E8F5E8 30%, #E3F2FD 70%, #FFF3E0 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+    position: relative;
+}
+
+/* Effet de fond animé */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(30, 136, 229, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(67, 160, 71, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(251, 140, 0, 0.05) 0%, transparent 50%);
+    z-index: -1;
+    animation: backgroundShift 20s ease-in-out infinite alternate;
+}
+
+@keyframes backgroundShift {
+    0% { transform: translateX(0%) translateY(0%); }
+    100% { transform: translateX(-10px) translateY(-10px); }
+}
+
+/* ===== TITRE PRINCIPAL ===== */
+h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+h2::before {
+    content: "👨‍🏫";
+    font-size: 2.2rem;
+    animation: bounce 2s infinite;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 2px;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* ===== CONTENEUR FORMULAIRE ===== */
+form {
+    background: var(--color-surface);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-form);
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* Effet décoratif sur le formulaire */
+form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-warning));
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+/* Effet de brillance subtile */
+form::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
+    animation: shine 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+}
+
+/* ===== GROUPES DE CHAMPS ===== */
+.form-group {
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+}
+
+.form-group:last-of-type {
+    margin-bottom: var(--spacing-xl);
+}
+
+/* ===== LABELS ===== */
+label {
+    display: block;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+    font-size: 1rem;
+    transition: color var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+/* Icônes pour les labels */
+label[for="nom"]::before {
+    content: "👤";
+    font-size: 1.1rem;
+}
+
+label[for="email"]::before {
+    content: "📧";
+    font-size: 1.1rem;
+}
+
+label[for="mot_de_passe"]::before {
+    content: "🔒";
+    font-size: 1.1rem;
+}
+
+/* ===== CHAMPS DE SAISIE ===== */
+.form-control {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid #E0E0E0;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: all var(--transition-smooth);
+    background: white;
+    color: var(--color-text);
+    position: relative;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-focus);
+    transform: translateY(-2px);
+}
+
+.form-control:hover {
+    border-color: #BDBDBD;
+}
+
+/* États de validation */
+.form-control:valid {
+    border-color: var(--color-success);
+}
+
+.form-control:invalid:not(:placeholder-shown) {
+    border-color: var(--color-error);
+}
+
+/* Effet de focus sur le label */
+.form-control:focus + label,
+.form-group:focus-within label {
+    color: var(--color-primary);
+    transform: translateY(-2px);
+}
+
+/* Placeholder styles */
+.form-control::placeholder {
+    color: var(--color-text-muted);
+    opacity: 0.7;
+}
+
+/* ===== BOUTON PRINCIPAL ===== */
+.btn {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, var(--color-primary), #1976D2);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    box-shadow: var(--shadow-button);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Effet de brillance sur le bouton */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left var(--transition-smooth);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(30, 136, 229, 0.4);
+    background: linear-gradient(135deg, #1976D2, var(--color-primary));
+}
+
+.btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(30, 136, 229, 0.3);
+}
+
+/* Effet de chargement (peut être activé via JS) */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+/* Tablettes */
+@media (max-width: 768px) {
+    body {
+        padding: var(--spacing-sm);
+    }
+    
+    h2 {
+        font-size: 2rem;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    form {
+        padding: var(--spacing-lg);
+        max-width: 100%;
+    }
+    
+    .form-group {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .form-control {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 1rem;
+    }
+}
+
+/* Mobiles */
+@media (max-width: 480px) {
+    body {
+        padding: var(--spacing-xs);
+        justify-content: flex-start;
+        padding-top: var(--spacing-lg);
+    }
+    
+    h2 {
+        font-size: 1.6rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    form {
+        padding: var(--spacing-md);
+        margin-top: var(--spacing-sm);
+    }
+    
+    .form-control {
+        padding: var(--spacing-sm);
+        font-size: 0.95rem;
+    }
+    
+    .btn {
+        padding: var(--spacing-sm);
+        font-size: 0.95rem;
+    }
+    
+    label {
+        font-size: 0.9rem;
+    }
+}
+
+/* Très petits écrans */
+@media (max-width: 320px) {
+    h2 {
+        font-size: 1.4rem;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    form {
+        padding: var(--spacing-sm);
+    }
+    
+    .form-control,
+    .btn {
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ANIMATIONS D'ENTRÉE ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+h2 {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+form {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.form-group {
+    animation: slideInLeft 0.6s ease-out both;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.4s; }
+.form-group:nth-child(2) { animation-delay: 0.5s; }
+.form-group:nth-child(3) { animation-delay: 0.6s; }
+
+.btn {
+    animation: fadeInUp 0.6s ease-out 0.8s both;
+}
+
+/* ===== ACCESSIBILITÉ ===== */
+.form-control:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.btn:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+.form-control:focus:not(:focus-visible),
+.btn:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ===== MODE SOMBRE (OPTIONNEL) ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #121212;
+        --color-surface: #1E1E1E;
+        --color-text: #FFFFFF;
+        --color-text-muted: #B0B0B0;
+    }
+    
+    .form-control {
+        background: #2A2A2A;
+        border-color: #404040;
+        color: var(--color-text);
+    }
+    
+    .form-control:hover {
+        border-color: #606060;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+    
+    body::before {
+        display: none;
+    }
+    
+    form {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .btn {
+        background: #333 !important;
+        color: white !important;
+    }
+}
+
+/* ===== ÉTATS DE VALIDATION AVANCÉS ===== */
+.form-group.success .form-control {
+    border-color: var(--color-success);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%234CAF50' d='M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.form-group.error .form-control {
+    border-color: var(--color-error);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23F44336' d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+/* Messages d'erreur */
+.error-message {
+    color: var(--color-error);
+    font-size: 0.85rem;
+    margin-top: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.error-message::before {
+    content: "⚠️";
+    font-size: 0.9rem;
+}
+
+/* Messages de succès */
+.success-message {
+    color: var(--color-success);
+    font-size: 0.85rem;
+    margin-top: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.success-message::before {
+    content: "✅";
+    font-size: 0.9rem;
+}
+  </style>
+</head>
+<body>
+
+  <h2>Ajouter un enseignant</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="nom">Nom :</label>
+      <input type="text" id="nom" name="nom" class="form-control" maxlength="150" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email :</label>
+      <input type="email" id="email" name="email" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+      <label for="mot_de_passe">Mot de passe :</label>
+      <input type="password" id="mot_de_passe" name="mot_de_passe" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn">Ajouter</button>
+  </form>
+
+</body>
+</html>

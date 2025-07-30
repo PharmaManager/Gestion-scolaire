@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier une note</title>
+                <style>
+        /* ===== VARIABLES CSS ===== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-focus: 0 0 0 3px rgba(30, 136, 229, 0.2);
+    --border-radius: 8px;
+    --border-radius-large: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== RESET ET BASE ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E8F4FD 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.page-header {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet de gradient subtil sur le header */
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: var(--border-radius-large) var(--border-radius-large) 0 0;
+}
+
+.page-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+/* ===== CONTENU PRINCIPAL ===== */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== MESSAGES ===== */
+.messages {
+    margin-bottom: var(--spacing-lg);
+}
+
+.message {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    box-shadow: var(--shadow-card);
+    animation: slideInDown 0.4s ease-out;
+}
+
+.message-success {
+    background: linear-gradient(135deg, var(--color-secondary), #66BB6A);
+    color: white;
+    border-left: 4px solid #2E7D32;
+}
+
+.message-error {
+    background: linear-gradient(135deg, var(--color-danger), #EF5350);
+    color: white;
+    border-left: 4px solid #C62828;
+}
+
+.message-warning {
+    background: linear-gradient(135deg, var(--color-warning), #FFA726);
+    color: white;
+    border-left: 4px solid #E65100;
+}
+
+.message-info {
+    background: linear-gradient(135deg, var(--color-primary), #42A5F5);
+    color: white;
+    border-left: 4px solid #1565C0;
+}
+
+/* ===== CONTENEUR FORMULAIRE ===== */
+.form-container {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-xl);
+    transition: box-shadow var(--transition-smooth);
+}
+
+.form-container:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+/* ===== FORMULAIRE ===== */
+.etudiant-form {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+/* ===== GROUPES DE CHAMPS ===== */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    position: relative;
+}
+
+.form-group.form-check {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* ===== LABELS ===== */
+.form-label {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 0.95rem;
+    transition: color var(--transition-fast);
+    position: relative;
+}
+
+.form-check-label {
+    font-weight: 500;
+    color: var(--color-text);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Indicateur de champ requis */
+.form-label::after {
+    content: ' *';
+    color: var(--color-danger);
+    font-weight: bold;
+}
+
+/* ===== CHAMPS DE SAISIE ===== */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid #E0E0E0;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: all var(--transition-smooth);
+    outline: none;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+    transform: translateY(-1px);
+}
+
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="tel"]:hover,
+input[type="date"]:hover,
+select:hover,
+textarea:hover {
+    border-color: var(--color-primary);
+}
+
+/* Textarea spécifique */
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Select personnalisé */
+select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+    appearance: none;
+}
+
+/* ===== CHECKBOX ===== */
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* ===== MESSAGES D'AIDE ===== */
+.form-help {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* ===== MESSAGES D'ERREUR ===== */
+.form-errors,
+.field-errors {
+    background: rgba(229, 57, 53, 0.1);
+    color: var(--color-danger);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--color-danger);
+    font-size: 0.9rem;
+    font-weight: 500;
+    animation: shake 0.5s ease-in-out;
+}
+
+/* ===== BOUTONS ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+    min-height: 48px;
+    box-shadow: var(--shadow-card);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-smooth);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+/* Bouton principal */
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), #1976D2);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1976D2, #1565C0);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+    background: linear-gradient(135deg, #757575, #616161);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #616161, #424242);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* ===== ACTIONS DU FORMULAIRE ===== */
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 2px solid #F0F0F0;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation d'apparition pour les éléments du formulaire */
+.form-group {
+    animation: fadeIn 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+.form-group:nth-child(5) { animation-delay: 0.5s; }
+.form-group:nth-child(6) { animation-delay: 0.6s; }
+.form-group:nth-child(7) { animation-delay: 0.7s; }
+.form-group:nth-child(8) { animation-delay: 0.8s; }
+.form-group:nth-child(9) { animation-delay: 0.9s; }
+.form-group:nth-child(10) { animation-delay: 1s; }
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablettes */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+    
+    .page-header {
+        padding: var(--spacing-lg);
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .form-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .form-actions {
+        justify-content: stretch;
+    }
+    
+    .btn {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+/* Mobiles */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .page-header {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .form-container {
+        padding: var(--spacing-md);
+        border-radius: var(--border-radius);
+    }
+    
+    .form-group {
+        gap: var(--spacing-xs);
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select,
+    textarea {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 16px; /* Évite le zoom sur iOS */
+    }
+    
+    .btn {
+        padding: var(--spacing-md);
+        font-size: 0.95rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Optimisation pour les petits écrans */
+    .form-group.form-check {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    
+    .form-check-label {
+        flex: 1;
+        line-height: 1.4;
+    }
+}
+
+/* ===== AMÉLIORATIONS POUR L'ACCESSIBILITÉ ===== */
+
+/* Focus visible pour la navigation au clavier */
+.btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Amélioration du contraste pour les utilisateurs malvoyants */
+@media (prefers-contrast: high) {
+    :root {
+        --color-text: #000000;
+        --color-text-muted: #333333;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select,
+    textarea {
+        border-width: 3px;
+    }
+}
+
+/* Réduction des animations pour les utilisateurs sensibles au mouvement */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== THÈME SOMBRE (BONUS) ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #121212;
+        --color-surface: #1E1E1E;
+        --color-text: #E0E0E0;
+        --color-text-muted: #A0A0A0;
+        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select,
+    textarea {
+        background: #2A2A2A;
+        border-color: #404040;
+        color: var(--color-text);
+    }
+}
+
+/* ===== ÉTATS DE CHARGEMENT ===== */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:disabled::before {
+    display: none;
+}
+
+/* Indicateur de chargement pour les boutons */
+.btn.loading {
+    pointer-events: none;
+    position: relative;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <div class="header-section" id="header-section">
+            <h1 class="page-title" id="page-title">Modifier une note</h1>
+        </div>
+
+        <div class="form-container" id="form-container">
+            <form method="post" class="note-form" id="note-form">
+                {% csrf_token %}
+                
+                <div class="form-group" id="etudiant-group">
+                    <label for="{{ form.etudiant.id_for_label }}" class="form-label">{{ form.etudiant.label }}</label>
+                    {{ form.etudiant }}
+                    {% if form.etudiant.errors %}
+                        <div class="error-message" id="etudiant-errors">
+                            {{ form.etudiant.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" id="matiere-group">
+                    <label for="{{ form.matiere.id_for_label }}" class="form-label">{{ form.matiere.label }}</label>
+                    {{ form.matiere }}
+                    {% if form.matiere.errors %}
+                        <div class="error-message" id="matiere-errors">
+                            {{ form.matiere.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row" id="note-row">
+                    <div class="form-group" id="note-group">
+                        <label for="{{ form.note.id_for_label }}" class="form-label">{{ form.note.label }}</label>
+                        {{ form.note }}
+                        {% if form.note.errors %}
+                            <div class="error-message" id="note-errors">
+                                {{ form.note.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group" id="note-sur-group">
+                        <label for="{{ form.note_sur.id_for_label }}" class="form-label">{{ form.note_sur.label }}</label>
+                        {{ form.note_sur }}
+                        {% if form.note_sur.errors %}
+                            <div class="error-message" id="note-sur-errors">
+                                {{ form.note_sur.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group" id="type-evaluation-group">
+                    <label for="{{ form.type_evaluation.id_for_label }}" class="form-label">{{ form.type_evaluation.label }}</label>
+                    {{ form.type_evaluation }}
+                    {% if form.type_evaluation.errors %}
+                        <div class="error-message" id="type-evaluation-errors">
+                            {{ form.type_evaluation.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" id="date-evaluation-group">
+                    <label for="{{ form.date_evaluation.id_for_label }}" class="form-label">{{ form.date_evaluation.label }}</label>
+                    {{ form.date_evaluation }}
+                    {% if form.date_evaluation.errors %}
+                        <div class="error-message" id="date-evaluation-errors">
+                            {{ form.date_evaluation.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" id="semestre-group">
+                    <label for="{{ form.semestre.id_for_label }}" class="form-label">{{ form.semestre.label }}</label>
+                    {{ form.semestre }}
+                    {% if form.semestre.help_text %}
+                        <small class="help-text" id="semestre-help">{{ form.semestre.help_text }}</small>
+                    {% endif %}
+                    {% if form.semestre.errors %}
+                        <div class="error-message" id="semestre-errors">
+                            {{ form.semestre.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" id="commentaire-group">
+                    <label for="{{ form.commentaire.id_for_label }}" class="form-label">{{ form.commentaire.label }}</label>
+                    {{ form.commentaire }}
+                    {% if form.commentaire.errors %}
+                        <div class="error-message" id="commentaire-errors">
+                            {{ form.commentaire.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors" id="form-errors">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="form-actions" id="form-actions">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">Modifier la note</button>
+                    <a href="{% url 'liste_notes' %}" class="btn btn-secondary" id="cancel-btn">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

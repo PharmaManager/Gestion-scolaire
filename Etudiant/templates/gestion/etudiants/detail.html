@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail Étudiant</title>
+    <style>
+        /* ===== VARIABLES CSS ===== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-focus: 0 0 0 3px rgba(30, 136, 229, 0.2);
+    --border-radius: 8px;
+    --border-radius-large: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Couleurs de statut */
+    --color-success: #4CAF50;
+    --color-inactive: #9E9E9E;
+}
+
+/* ===== RESET ET BASE ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E8F4FD 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.page-header {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet de gradient subtil sur le header */
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: var(--border-radius-large) var(--border-radius-large) 0 0;
+}
+
+.page-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* Icône utilisateur dans le titre */
+.page-title::before {
+    content: '👤';
+    font-size: 0.8em;
+    padding: var(--spacing-sm);
+    background: linear-gradient(135deg, var(--color-primary), #1976D2);
+    border-radius: 50%;
+    box-shadow: var(--shadow-card);
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+/* ===== CONTENU PRINCIPAL ===== */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== MESSAGES ===== */
+.messages {
+    margin-bottom: var(--spacing-lg);
+}
+
+.message {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+    box-shadow: var(--shadow-card);
+    animation: slideInDown 0.4s ease-out;
+}
+
+.message-success {
+    background: linear-gradient(135deg, var(--color-secondary), #66BB6A);
+    color: white;
+    border-left: 4px solid #2E7D32;
+}
+
+.message-error {
+    background: linear-gradient(135deg, var(--color-danger), #EF5350);
+    color: white;
+    border-left: 4px solid #C62828;
+}
+
+.message-warning {
+    background: linear-gradient(135deg, var(--color-warning), #FFA726);
+    color: white;
+    border-left: 4px solid #E65100;
+}
+
+.message-info {
+    background: linear-gradient(135deg, var(--color-primary), #42A5F5);
+    color: white;
+    border-left: 4px solid #1565C0;
+}
+
+/* ===== DÉTAIL ÉTUDIANT ===== */
+.etudiant-detail {
+    display: grid;
+    gap: var(--spacing-xl);
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* ===== SECTIONS DE DÉTAIL ===== */
+.detail-section {
+    background: var(--color-surface);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: all var(--transition-smooth);
+    position: relative;
+}
+
+.detail-section:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* Bordure colorée pour chaque section */
+.detail-section:nth-child(1) {
+    border-top: 4px solid var(--color-primary);
+}
+
+.detail-section:nth-child(2) {
+    border-top: 4px solid var(--color-secondary);
+}
+
+.detail-section:nth-child(3) {
+    border-top: 4px solid var(--color-warning);
+}
+
+/* ===== TITRES DE SECTION ===== */
+.section-title {
+    background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-text);
+    border-bottom: 1px solid #E0E0E0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* Icônes pour les titres de section */
+.section-title:nth-child(1)::before {
+    content: '👨‍🎓';
+    font-size: 1.2em;
+}
+
+#section-title-identite::before {
+    content: '🆔';
+    font-size: 1.2em;
+}
+
+#section-title-contact::before {
+    content: '📞';
+    font-size: 1.2em;
+}
+
+#section-title-scolarite::before {
+    content: '🎓';
+    font-size: 1.2em;
+}
+
+/* ===== CONTENU DES SECTIONS ===== */
+.detail-content {
+    padding: var(--spacing-xl);
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+/* ===== ÉLÉMENTS DE DÉTAIL ===== */
+.detail-item {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--spacing-md);
+    align-items: start;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-smooth);
+    position: relative;
+}
+
+.detail-item:hover {
+    background: rgba(30, 136, 229, 0.02);
+    transform: translateX(4px);
+}
+
+.detail-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: var(--color-primary);
+    border-radius: 2px;
+    transition: height var(--transition-smooth);
+}
+
+.detail-item:hover::before {
+    height: 60%;
+}
+
+/* ===== LABELS ET VALEURS ===== */
+.detail-label {
+    font-weight: 600;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: var(--color-text);
+    font-size: 1.1rem;
+    word-break: break-word;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* ===== STATUTS SPÉCIAUX ===== */
+.statut-actif {
+    color: var(--color-success) !important;
+    font-weight: 700 !important;
+    position: relative;
+}
+
+.statut-actif::before {
+    content: '✅';
+    margin-right: var(--spacing-sm);
+    font-size: 1.2em;
+}
+
+.statut-inactif {
+    color: var(--color-inactive) !important;
+    font-weight: 700 !important;
+    position: relative;
+}
+
+.statut-inactif::before {
+    content: '❌';
+    margin-right: var(--spacing-sm);
+    font-size: 1.2em;
+}
+
+/* ===== BOUTONS ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+    min-height: 44px;
+    box-shadow: var(--shadow-card);
+    white-space: nowrap;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-smooth);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+/* Bouton principal */
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), #1976D2);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1976D2, #1565C0);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+    background: linear-gradient(135deg, #757575, #616161);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #616161, #424242);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Bouton warning (modifier) */
+.btn-warning {
+    background: linear-gradient(135deg, var(--color-warning), #F57C00);
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #F57C00, #E65100);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Bouton danger (supprimer) */
+.btn-danger {
+    background: linear-gradient(135deg, var(--color-danger), #D32F2F);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #D32F2F, #C62828);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Icônes dans les boutons */
+.btn-warning::before {
+    content: '✏️';
+    font-size: 1.1em;
+}
+
+.btn-danger::before {
+    content: '🗑️';
+    font-size: 1.1em;
+}
+
+.btn-secondary::before {
+    content: '↩️';
+    font-size: 1.1em;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation d'apparition pour les sections */
+.detail-section {
+    animation: fadeIn 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.detail-section:nth-child(1) { animation-delay: 0.1s; }
+.detail-section:nth-child(2) { animation-delay: 0.3s; }
+.detail-section:nth-child(3) { animation-delay: 0.5s; }
+
+/* Animation pour les éléments de détail */
+.detail-item {
+    animation: fadeIn 0.4s ease-out;
+    animation-fill-mode: both;
+}
+
+.detail-item:nth-child(1) { animation-delay: 0.2s; }
+.detail-item:nth-child(2) { animation-delay: 0.3s; }
+.detail-item:nth-child(3) { animation-delay: 0.4s; }
+.detail-item:nth-child(4) { animation-delay: 0.5s; }
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablettes */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+    
+    .page-header {
+        padding: var(--spacing-lg);
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-lg);
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        justify-content: center;
+    }
+    
+    .header-actions {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .detail-content {
+        padding: var(--spacing-lg);
+    }
+    
+    .detail-item {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+        text-align: left;
+    }
+    
+    .detail-label {
+        font-size: 0.9rem;
+    }
+    
+    .detail-value {
+        font-size: 1rem;
+        padding-left: var(--spacing-md);
+    }
+    
+    .btn {
+        font-size: 0.9rem;
+        padding: var(--spacing-sm) var(--spacing-md);
+        min-height: 42px;
+    }
+}
+
+/* Mobiles */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .page-header {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .page-title::before {
+        font-size: 0.7em;
+        padding: var(--spacing-xs);
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.9rem;
+        padding: var(--spacing-md);
+    }
+    
+    .detail-section {
+        border-radius: var(--border-radius);
+    }
+    
+    .section-title {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: 1.1rem;
+    }
+    
+    .detail-content {
+        padding: var(--spacing-md);
+        gap: var(--spacing-md);
+    }
+    
+    .detail-item {
+        padding: var(--spacing-sm);
+        gap: var(--spacing-xs);
+    }
+    
+    .detail-label {
+        font-size: 0.85rem;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .detail-value {
+        font-size: 0.95rem;
+        padding-left: 0;
+    }
+    
+    .etudiant-detail {
+        gap: var(--spacing-lg);
+    }
+}
+
+/* ===== AMÉLIORATIONS POUR L'ACCESSIBILITÉ ===== */
+
+/* Focus visible pour la navigation au clavier */
+.btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Amélioration du contraste pour les utilisateurs malvoyants */
+@media (prefers-contrast: high) {
+    :root {
+        --color-text: #000000;
+        --color-text-muted: #333333;
+    }
+    
+    .detail-item {
+        border: 1px solid #E0E0E0;
+    }
+}
+
+/* Réduction des animations pour les utilisateurs sensibles au mouvement */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .detail-section:hover {
+        transform: none;
+    }
+    
+    .detail-item:hover {
+        transform: none;
+    }
+}
+
+/* ===== THÈME SOMBRE (BONUS) ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #121212;
+        --color-surface: #1E1E1E;
+        --color-text: #E0E0E0;
+        --color-text-muted: #A0A0A0;
+        --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    .section-title {
+        background: linear-gradient(135deg, #2A2A2A 0%, #333333 100%);
+        border-bottom-color: #404040;
+    }
+    
+    .detail-item:hover {
+        background: rgba(30, 136, 229, 0.1);
+    }
+}
+
+/* ===== ÉTATS SPÉCIAUX ===== */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:disabled::before {
+    display: none;
+}
+
+/* Effet de "pulse" pour les éléments importants */
+.statut-actif {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* ===== AMÉLIORATIONS VISUELLES ===== */
+
+/* Effet de brillance sur les cartes */
+.detail-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.detail-section:hover::after {
+    left: 100%;
+}
+
+/* Indicateur visuel pour les informations manquantes */
+.detail-item:empty::after {
+    content: 'Information non renseignée';
+    color: var(--color-text-muted);
+    font-style: italic;
+    opacity: 0.7;
+}
+
+/* Style pour les liens email et téléphone */
+.detail-value[href^="mailto:"],
+.detail-value[href^="tel:"] {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.detail-value[href^="mailto:"]:hover,
+.detail-value[href^="tel:"]:hover {
+    color: #1976D2;
+    text-decoration: underline;
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header class="page-header" id="page-header">
+            <h1 class="page-title" id="page-title">Détail de l'Étudiant</h1>
+            <div class="header-actions" id="header-actions">
+                <a href="{% url 'modifier_etudiant' etudiant.pk %}" class="btn btn-warning" id="btn-modifier">Modifier</a>
+                <a href="{% url 'supprimer_etudiant' etudiant.pk %}" class="btn btn-danger" id="btn-supprimer">Supprimer</a>
+                <a href="{% url 'liste_etudiants' %}" class="btn btn-secondary" id="btn-retour">Retour à la Liste</a>
+            </div>
+        </header>
+
+        <main class="content" id="main-content">
+            <!-- Messages -->
+            {% if messages %}
+                <div class="messages" id="messages">
+                    {% for message in messages %}
+                        <div class="message message-{{ message.tags }}" id="message-{{ forloop.counter }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Détails de l'étudiant -->
+            <div class="etudiant-detail" id="etudiant-detail">
+                <div class="detail-section" id="detail-section-identite">
+                    <h2 class="section-title" id="section-title-identite">Informations personnelles</h2>
+                    <div class="detail-content" id="detail-content-identite">
+                        <div class="detail-item" id="detail-item-nom">
+                            <span class="detail-label" id="detail-label-nom">Nom complet :</span>
+                            <span class="detail-value" id="detail-value-nom">{{ etudiant.nom_complet }}</span>
+                        </div>
+                        <div class="detail-item" id="detail-item-numero">
+                            <span class="detail-label" id="detail-label-numero">Numéro étudiant :</span>
+                            <span class="detail-value" id="detail-value-numero">{{ etudiant.numero_etudiant }}</span>
+                        </div>
+                        <div class="detail-item" id="detail-item-naissance">
+                            <span class="detail-label" id="detail-label-naissance">Date de naissance :</span>
+                            <span class="detail-value" id="detail-value-naissance">{{ etudiant.date_naissance|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="detail-item" id="detail-item-sexe">
+                            <span class="detail-label" id="detail-label-sexe">Sexe :</span>
+                            <span class="detail-value" id="detail-value-sexe">{{ etudiant.get_sexe_display }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section" id="detail-section-contact">
+                    <h2 class="section-title" id="section-title-contact">Informations de contact</h2>
+                    <div class="detail-content" id="detail-content-contact">
+                        {% if etudiant.adresse %}
+                            <div class="detail-item" id="detail-item-adresse">
+                                <span class="detail-label" id="detail-label-adresse">Adresse :</span>
+                                <span class="detail-value" id="detail-value-adresse">{{ etudiant.adresse }}</span>
+                            </div>
+                        {% endif %}
+                        {% if etudiant.telephone %}
+                            <div class="detail-item" id="detail-item-telephone">
+                                <span class="detail-label" id="detail-label-telephone">Téléphone :</span>
+                                <span class="detail-value" id="detail-value-telephone">{{ etudiant.telephone }}</span>
+                            </div>
+                        {% endif %}
+                        {% if etudiant.email %}
+                            <div class="detail-item" id="detail-item-email">
+                                <span class="detail-label" id="detail-label-email">Email :</span>
+                                <span class="detail-value" id="detail-value-email">{{ etudiant.email }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="detail-section" id="detail-section-scolarite">
+                    <h2 class="section-title" id="section-title-scolarite">Informations scolaires</h2>
+                    <div class="detail-content" id="detail-content-scolarite">
+                        <div class="detail-item" id="detail-item-classe">
+                            <span class="detail-label" id="detail-label-classe">Classe :</span>
+                            <span class="detail-value" id="detail-value-classe">{{ etudiant.classe }}</span>
+                        </div>
+                        <div class="detail-item" id="detail-item-inscription">
+                            <span class="detail-label" id="detail-label-inscription">Date d'inscription :</span>
+                            <span class="detail-value" id="detail-value-inscription">{{ etudiant.date_inscription|date:"d/m/Y à H:i" }}</span>
+                        </div>
+                        <div class="detail-item" id="detail-item-statut">
+                            <span class="detail-label" id="detail-label-statut">Statut :</span>
+                            {% if etudiant.actif %}
+                                <span class="detail-value statut-actif" id="detail-value-statut">Actif</span>
+                            {% else %}
+                                <span class="detail-value statut-inactif" id="detail-value-statut">Inactif</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

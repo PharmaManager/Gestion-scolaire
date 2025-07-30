@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supprimer une note</title>
+    <style>
+/* Styles pour la page de suppression de note */
+:root {
+    /* Palette de couleurs */
+    --color-primary: #1E88E5;
+    --color-secondary: #43A047;
+    --color-danger: #E53935;
+    --color-warning: #FB8C00;
+    --color-background: #F5F7FA;
+    --color-surface: #FFFFFF;
+    --color-text: #212121;
+    --color-text-muted: #616161;
+    --color-disabled: #BDBDBD;
+    
+    /* Variables de style */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+}
+
+/* Styles de base */
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 20px;
+}
+
+/* En-tête */
+.header-section {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.page-title {
+    color: var(--color-danger);
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background-color: var(--color-danger);
+    border-radius: 2px;
+}
+
+/* Conteneur de confirmation */
+.confirmation-container {
+    background-color: var(--color-surface);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-card);
+}
+
+.confirmation-message {
+    color: var(--color-danger);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+/* Détails de la note */
+.note-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    padding: 0.8rem;
+    background-color: #FAFAFA;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.info-item:hover {
+    background-color: #F0F0F0;
+    transform: translateY(-2px);
+}
+
+.info-label {
+    color: var(--color-primary);
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+.info-value {
+    color: var(--color-text);
+    word-break: break-word;
+}
+
+/* Actions du formulaire */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.delete-form {
+    margin: 0; /* Reset pour le form */
+}
+
+/* Boutons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    font-size: 1rem;
+    min-width: 160px;
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #C62828;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+.btn-secondary {
+    background-color: var(--color-text-muted);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #757575;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+/* Commentaire (style spécial) */
+#commentaire-info {
+    grid-column: 1 / -1;
+    background-color: #FFF3E0;
+    border-left: 4px solid var(--color-warning);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .page-title {
+        font-size: 1.7rem;
+    }
+    
+    .confirmation-container {
+        padding: 1.5rem;
+    }
+    
+    .confirmation-message {
+        font-size: 1.2rem;
+    }
+    
+    .note-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .confirmation-message {
+        font-size: 1.1rem;
+    }
+    
+    .info-item {
+        padding: 0.7rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <div class="header-section" id="header-section">
+            <h1 class="page-title" id="page-title">Supprimer une note</h1>
+        </div>
+
+        <div class="confirmation-container" id="confirmation-container">
+            <div class="note-details" id="note-details">
+                <h3 class="confirmation-message" id="confirmation-message">
+                    Êtes-vous sûr de vouloir supprimer cette note ?
+                </h3>
+                
+                <div class="note-info" id="note-info">
+                    <div class="info-item" id="etudiant-info">
+                        <strong class="info-label">Étudiant :</strong>
+                        <span class="info-value">{{ note.etudiant }}</span>
+                    </div>
+                    
+                    <div class="info-item" id="matiere-info">
+                        <strong class="info-label">Matière :</strong>
+                        <span class="info-value">{{ note.matiere }}</span>
+                    </div>
+                    
+                    <div class="info-item" id="note-value-info">
+                        <strong class="info-label">Note :</strong>
+                        <span class="info-value">{{ note.note }}/{{ note.note_sur }}</span>
+                    </div>
+                    
+                    <div class="info-item" id="type-evaluation-info">
+                        <strong class="info-label">Type d'évaluation :</strong>
+                        <span class="info-value">{{ note.get_type_evaluation_display }}</span>
+                    </div>
+                    
+                    <div class="info-item" id="date-evaluation-info">
+                        <strong class="info-label">Date d'évaluation :</strong>
+                        <span class="info-value">{{ note.date_evaluation }}</span>
+                    </div>
+                    
+                    <div class="info-item" id="semestre-info">
+                        <strong class="info-label">Semestre :</strong>
+                        <span class="info-value">{{ note.semestre }}</span>
+                    </div>
+                    
+                    {% if note.commentaire %}
+                    <div class="info-item" id="commentaire-info">
+                        <strong class="info-label">Commentaire :</strong>
+                        <span class="info-value">{{ note.commentaire }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-actions" id="form-actions">
+                <form method="post" class="delete-form" id="delete-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" id="confirm-delete-btn">
+                        Oui, supprimer
+                    </button>
+                </form>
+                <a href="{% url 'liste_notes' %}" class="btn btn-secondary" id="cancel-btn">Annuler</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

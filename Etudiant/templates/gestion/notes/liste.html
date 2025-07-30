@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Notes</title>
+        <style>
+                /* ===================================
+   VARIABLES CSS - PALETTE DE COULEURS
+   =================================== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --border-radius: 8px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Tailles de police */
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+}
+
+/* ===================================
+   RESET ET BASE STYLES
+   =================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+    font-size: var(--font-size-base);
+}
+
+/* ===================================
+   CONTENEUR PRINCIPAL
+   =================================== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-sm);
+    min-height: 100vh;
+}
+
+/* ===================================
+   HEADER DE LA PAGE
+   =================================== */
+.page-header {
+    background: linear-gradient(135deg, var(--color-primary), #42A5F5);
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.page-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+/* ===================================
+   BOUTONS GÉNÉRIQUES
+   =================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    min-height: 40px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1976D2;
+}
+
+.btn-secondary {
+    background: var(--color-secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #388E3C;
+}
+
+.btn-warning {
+    background: var(--color-warning);
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #F57C00;
+}
+
+.btn-danger {
+    background: var(--color-danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #D32F2F;
+}
+
+.btn-info {
+    background: #26C6DA;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #00ACC1;
+}
+
+/* ===================================
+   FORMULAIRE DE RECHERCHE
+   =================================== */
+.search-container {
+    background: var(--color-surface);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-lg);
+}
+
+.search-fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+}
+
+.search-fields input,
+.search-fields select {
+    padding: var(--spacing-sm);
+    border: 2px solid #E0E0E0;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.search-fields input:focus,
+.search-fields select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+}
+
+.search-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+/* ===================================
+   LISTE DES ÉTUDIANTS
+   =================================== */
+.etudiants-list {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.etudiant-item {
+    background: var(--color-surface);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-lg);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--color-primary);
+}
+
+.etudiant-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.etudiant-info {
+    margin-bottom: var(--spacing-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    align-items: start;
+}
+
+.etudiant-nom {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+    grid-column: 1 / -1;
+}
+
+.etudiant-info p {
+    margin: 0;
+    padding: var(--spacing-xs) 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.etudiant-numero {
+    font-weight: 600;
+    color: var(--color-text) !important;
+    background: #F0F4FF;
+    padding: var(--spacing-xs) var(--spacing-sm) !important;
+    border-radius: 20px;
+    display: inline-block !important;
+    width: fit-content;
+}
+
+.etudiant-classe {
+    background: #E8F5E8;
+    color: var(--color-secondary) !important;
+    font-weight: 600;
+    padding: var(--spacing-xs) var(--spacing-sm) !important;
+    border-radius: 20px;
+    display: inline-block !important;
+    width: fit-content;
+}
+
+/* Statuts avec badges colorés */
+.statut-actif {
+    background: var(--color-secondary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statut-inactif {
+    background: var(--color-disabled);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Actions des étudiants */
+.etudiant-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    border-top: 1px solid #F0F0F0;
+    padding-top: var(--spacing-md);
+}
+
+.etudiant-actions .btn {
+    font-size: 0.75rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    min-height: 32px;
+}
+
+/* ===================================
+   PAGINATION
+   =================================== */
+.pagination-nav {
+    margin-top: var(--spacing-xl);
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: var(--spacing-xs);
+    background: var(--color-surface);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-card);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.page-item {
+    display: flex;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 40px;
+    min-height: 40px;
+    border: 2px solid transparent;
+}
+
+.page-link:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.page-item.current .page-link {
+    background: var(--color-primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* ===================================
+   MESSAGE "AUCUN ÉTUDIANT"
+   =================================== */
+.no-etudiants {
+    text-align: center;
+    background: var(--color-surface);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-card);
+}
+
+.no-etudiants-message {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - TABLETTES
+   =================================== */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-xs);
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        padding: var(--spacing-md);
+    }
+    
+    .header-actions {
+        justify-content: center;
+        margin-top: var(--spacing-sm);
+    }
+    
+    .search-fields {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-actions {
+        justify-content: center;
+    }
+    
+    .etudiant-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .etudiant-actions {
+        justify-content: center;
+    }
+    
+    .pagination {
+        padding: var(--spacing-xs);
+        gap: 2px;
+    }
+    
+    .page-link {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        min-width: 32px;
+        min-height: 32px;
+    }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - MOBILES
+   =================================== */
+@media (max-width: 480px) {
+    .page-title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .search-container {
+        padding: var(--spacing-md);
+    }
+    
+    .etudiant-item {
+        padding: var(--spacing-md);
+    }
+    
+    .etudiant-actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .etudiant-actions .btn {
+        width: 100%;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        align-items: center;
+    }
+    
+    .page-link {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ===================================
+   ANIMATIONS ET MICRO-INTERACTIONS
+   =================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.etudiant-item {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.etudiant-item:nth-child(even) {
+    animation-delay: 0.1s;
+}
+
+.etudiant-item:nth-child(odd) {
+    animation-delay: 0.2s;
+}
+
+/* ===================================
+   ACCESSIBILITÉ
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus visible pour l'accessibilité */
+.btn:focus-visible,
+.page-link:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ===================================
+   ÉTATS DE SURVOL AVANCÉS
+   =================================== */
+.etudiant-item:hover .etudiant-nom {
+    color: var(--color-secondary);
+    transition: color 0.3s ease;
+}
+
+.search-container:hover {
+    box-shadow: var(--shadow-hover);
+    transition: box-shadow 0.3s ease;
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header class="page-header" id="page-header">
+            <h1 class="page-title" id="page-title">Liste des Notes</h1>
+            <div class="header-actions" id="header-actions">
+                <a href="{% url 'ajouter_note' %}" class="btn btn-primary" id="btn-ajouter">Ajouter une Note</a>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary" id="btn-retour">Retour</a>
+            </div>
+        </header>
+
+        <main class="content" id="main-content">
+            <!-- Filtres -->
+            <div class="filters-container" id="filters-container">
+                <form method="get" class="filters-form" id="filters-form">
+                    <div class="filter-fields" id="filter-fields">
+                        <!-- Filtre Matière -->
+                        <div class="filter-group" id="filter-group-matiere">
+                            <label for="matiere" class="filter-label" id="label-matiere">Matière :</label>
+                            <select name="matiere" class="form-control" id="filter-matiere">
+                                <option value="">Toutes les matières</option>
+                                {% for matiere in matieres %}
+                                    <option value="{{ matiere.id }}" {% if request.GET.matiere == matiere.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ matiere.nom }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Filtre Classe -->
+                        <div class="filter-group" id="filter-group-classe">
+                            <label for="classe" class="filter-label" id="label-classe">Classe :</label>
+                            <select name="classe" class="form-control" id="filter-classe">
+                                <option value="">Toutes les classes</option>
+                                {% for classe in classes %}
+                                    <option value="{{ classe.id }}" {% if request.GET.classe == classe.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ classe.nom }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions" id="filter-actions">
+                        <button type="submit" class="btn btn-primary" id="btn-filtrer">Filtrer</button>
+                        <a href="{% url 'liste_notes' %}" class="btn btn-secondary" id="btn-reset-filters">Réinitialiser</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Liste des notes -->
+            {% if page_obj %}
+                <div class="notes-list" id="notes-list">
+                    {% for note in page_obj %}
+                        <div class="note-item" id="note-{{ note.id }}">
+                            <div class="note-info" id="note-info-{{ note.id }}">
+                                <h3 class="note-etudiant" id="note-etudiant-{{ note.id }}">{{ note.etudiant.nom_complet }}</h3>
+                                <p class="note-matiere" id="note-matiere-{{ note.id }}">{{ note.matiere.nom }} ({{ note.matiere.code }})</p>
+                                <p class="note-valeur" id="note-valeur-{{ note.id }}">
+                                    <strong>{{ note.note }}/{{ note.note_sur }}</strong>
+                                    {% if note.note_sur != 20 %}
+                                        <span class="note-sur-vingt" id="note-sur-vingt-{{ note.id }}">
+                                            ({{ note.note_sur_vingt|floatformat:2 }}/20)
+                                        </span>
+                                    {% endif %}
+                                </p>
+                                <p class="note-type" id="note-type-{{ note.id }}">{{ note.get_type_evaluation_display }}</p>
+                                <p class="note-date-eval" id="note-date-eval-{{ note.id }}">Évaluation : {{ note.date_evaluation|date:"d/m/Y" }}</p>
+                                <p class="note-semestre" id="note-semestre-{{ note.id }}">Semestre : {{ note.semestre }}</p>
+                                {% if note.commentaire %}
+                                    <p class="note-commentaire" id="note-commentaire-{{ note.id }}">{{ note.commentaire }}</p>
+                                {% endif %}
+                                <p class="note-saisie" id="note-saisie-{{ note.id }}">Saisie : {{ note.date_saisie|date:"d/m/Y à H:i" }}</p>
+                                {% if note.modifie_par %}
+                                    <p class="note-modifie-par" id="note-modifie-par-{{ note.id }}">
+                                        Modifié par : {{ note.modifie_par.first_name }} {{ note.modifie_par.last_name }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                            <div class="note-actions" id="note-actions-{{ note.id }}">
+
+                                <a href="{% url 'modifier_note' note.pk %}" class="btn btn-warning" id="btn-modifier-{{ note.id }}">Modifier</a>
+                                <a href="{% url 'supprimer_note' note.pk %}" class="btn btn-danger" id="btn-supprimer-{{ note.id }}">Supprimer</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                    <nav class="pagination-nav" id="pagination-nav">
+                        <ul class="pagination" id="pagination">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item" id="page-prev">
+                                    <a class="page-link" href="?page=1{% if request.GET.matiere %}&matiere={{ request.GET.matiere }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}" id="page-first">Première</a>
+                                </li>
+                                <li class="page-item" id="page-previous">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.matiere %}&matiere={{ request.GET.matiere }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}" id="page-prev-link">Précédente</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item current" id="page-current">
+                                <span class="page-link" id="current-page-info">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item" id="page-next">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.matiere %}&matiere={{ request.GET.matiere }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}" id="page-next-link">Suivante</a>
+                                </li>
+                                <li class="page-item" id="page-last">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.matiere %}&matiere={{ request.GET.matiere }}{% endif %}{% if request.GET.classe %}&classe={{ request.GET.classe }}{% endif %}" id="page-last-link">Dernière</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="no-notes" id="no-notes">
+                    <p class="no-notes-message" id="no-notes-message">Aucune note trouvée.</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

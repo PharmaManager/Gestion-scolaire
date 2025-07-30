@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Génération de bulletins</title>
+    <style>
+        /* ===================================
+   VARIABLES CSS - PALETTE DE COULEURS
+   =================================== */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-focus: 0 0 0 3px rgba(30, 136, 229, 0.1);
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-2xl: 4rem;
+    
+    /* Tailles de police */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+    
+    /* Couleurs pour alertes */
+    --color-success: #4CAF50;
+    --color-info: #2196F3;
+    --color-light: #F8F9FA;
+}
+
+/* ===================================
+   RESET ET BASE STYLES
+   =================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--color-background) 0%, #E3F2FD 100%);
+    color: var(--color-text);
+    line-height: 1.6;
+    font-size: var(--font-size-base);
+    min-height: 100vh;
+}
+
+/* ===================================
+   CONTENEUR PRINCIPAL
+   =================================== */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    min-height: 100vh;
+}
+
+/* ===================================
+   HEADER SECTION
+   =================================== */
+.header-section {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-xl) 0;
+}
+
+.page-title {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 2px;
+}
+
+/* ===================================
+   MESSAGES DJANGO
+   =================================== */
+.messages-container {
+    margin-bottom: var(--spacing-lg);
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-sm);
+    box-shadow: var(--shadow-card);
+    font-weight: 500;
+    animation: slideInDown 0.5s ease;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+    color: #2E7D32;
+    border-left: 4px solid var(--color-success);
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+    color: #C62828;
+    border-left: 4px solid var(--color-danger);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+    color: #F57C00;
+    border-left: 4px solid var(--color-warning);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+    color: #1565C0;
+    border-left: 4px solid var(--color-info);
+}
+
+.close-message {
+    background: none;
+    border: none;
+    font-size: var(--font-size-xl);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-message:hover {
+    opacity: 1;
+}
+
+/* ===================================
+   FORMULAIRE PRINCIPAL
+   =================================== */
+.form-container {
+    background: var(--color-surface);
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-2xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+.bulletin-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* Groupes de formulaire */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.form-group-half {
+    flex: 1;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.form-label::before {
+    content: '•';
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+/* Champs de formulaire */
+.form-container select,
+.form-container input {
+    padding: var(--spacing-md);
+    border: 2px solid #E0E0E0;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    transition: all 0.3s ease;
+    background: white;
+    font-family: inherit;
+}
+
+.form-container select:focus,
+.form-container input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+    transform: translateY(-2px);
+}
+
+.form-container select:hover,
+.form-container input:hover {
+    border-color: var(--color-primary);
+}
+
+/* Messages d'erreur */
+.error-message {
+    background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+    color: var(--color-danger);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    border-left: 4px solid var(--color-danger);
+    animation: shake 0.5s ease;
+}
+
+/* Actions du formulaire */
+.form-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid #F0F0F0;
+}
+
+/* ===================================
+   BOUTONS
+   =================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border: none;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    min-height: 48px;
+    gap: var(--spacing-xs);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), #42A5F5);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1976D2, var(--color-primary));
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--color-secondary), #66BB6A);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #388E3C, var(--color-secondary));
+}
+
+.btn-loader {
+    display: none;
+    animation: pulse 1.5s infinite;
+}
+
+/* ===================================
+   SECTIONS D'INFORMATIONS
+   =================================== */
+.info-section {
+    background: var(--color-surface);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.info-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-warning));
+}
+
+.section-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.title-icon {
+    font-size: var(--font-size-2xl);
+}
+
+/* ===================================
+   GRILLE DES FORMATS
+   =================================== */
+.format-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.format-card {
+    background: linear-gradient(135deg, #FAFAFA, #F0F4FF);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.format-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.format-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.format-card:hover::before {
+    transform: scaleX(1);
+}
+
+.format-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.format-icon {
+    font-size: var(--font-size-2xl);
+}
+
+.format-type {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 0;
+}
+
+.format-description {
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.5;
+}
+
+.format-features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.feature-tag {
+    background: var(--color-primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    width: fit-content;
+}
+
+/* ===================================
+   INSTRUCTIONS
+   =================================== */
+.instructions-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.instruction-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: linear-gradient(135deg, #F8F9FA, #E3F2FD);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--color-primary);
+    transition: all 0.3s ease;
+}
+
+.instruction-item:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-card);
+}
+
+.instruction-number {
+    background: var(--color-primary);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+}
+
+.instruction-content {
+    flex: 1;
+    color: var(--color-text);
+}
+
+.instruction-content strong {
+    color: var(--color-primary);
+}
+
+/* ===================================
+   INFORMATIONS TECHNIQUES
+   =================================== */
+.technical-grid {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.technical-item {
+    padding: var(--spacing-md);
+    background: linear-gradient(135deg, #F5F5F5, #E8F5E8);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--color-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.technical-item strong {
+    color: var(--color-secondary);
+    font-weight: 600;
+}
+
+.technical-item span {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* ===================================
+   PIED DE PAGE
+   =================================== */
+.footer-section {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--color-surface), #F8F9FA);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-card);
+    margin-top: var(--spacing-2xl);
+}
+
+.footer-text {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+.footer-icon {
+    font-size: var(--font-size-lg);
+}
+
+/* ===================================
+   LOADER GLOBAL
+   =================================== */
+.global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+.loader-content {
+    background: var(--color-surface);
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    box-shadow: var(--shadow-hover);
+    max-width: 400px;
+    width: 90%;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto var(--spacing-lg);
+}
+
+.loader-text {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.loader-subtext {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+/* ===================================
+   ANIMATIONS
+   =================================== */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.info-section {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.info-section:nth-child(even) {
+    animation-delay: 0.1s;
+}
+
+.info-section:nth-child(odd) {
+    animation-delay: 0.2s;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - TABLETTES
+   =================================== */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+    
+    .page-title {
+        font-size: var(--font-size-2xl);
+    }
+    
+    .form-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .format-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-section {
+        padding: var(--spacing-lg);
+    }
+    
+    .instruction-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .instruction-number {
+        align-self: center;
+    }
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - MOBILES
+   =================================== */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-sm);
+    }
+    
+    .header-section {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .page-title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .form-container {
+        padding: var(--spacing-md);
+    }
+    
+    .section-title {
+        font-size: var(--font-size-lg);
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .format-card {
+        padding: var(--spacing-md);
+    }
+    
+    .instruction-item {
+        padding: var(--spacing-sm);
+    }
+    
+    .technical-item {
+        padding: var(--spacing-sm);
+    }
+    
+    .loader-content {
+        padding: var(--spacing-lg);
+    }
+    
+    .alert {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    
+    .close-message {
+        align-self: flex-end;
+    }
+}
+
+/* ===================================
+   ACCESSIBILITÉ
+   =================================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus visible pour l'accessibilité */
+.btn:focus-visible,
+select:focus-visible,
+input:focus-visible,
+.close-message:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ===================================
+   ÉTATS SPÉCIAUX
+   =================================== */
+.btn:disabled {
+    background: var(--color-disabled) !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.btn:disabled:hover {
+    transform: none !important;
+}
+
+/* Amélioration de l'expérience utilisateur */
+.form-container:hover {
+    box-shadow: var(--shadow-hover);
+    transition: box-shadow 0.3s ease;
+}
+
+select option {
+    padding: var(--spacing-sm);
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <div class="header-section" id="header-section">
+            <h1 class="page-title" id="page-title">Génération de bulletins de notes</h1>
+        </div>
+
+        <!-- Messages Django -->
+        {% if messages %}
+            <div class="messages-container" id="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" id="message-{{ forloop.counter }}">
+                        <span class="message-text">{{ message }}</span>
+                        <button type="button" class="close-message" id="close-message-{{ forloop.counter }}">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-container" id="form-container">
+            <form method="post" class="bulletin-form" id="bulletin-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group" id="classe-group">
+                    <label for="{{ form.classe.id_for_label }}" class="form-label">{{ form.classe.label }}</label>
+                    {{ form.classe }}
+                    {% if form.classe.errors %}
+                        <div class="error-message field-error" id="classe-errors">
+                            {% for error in form.classe.errors %}
+                                <span class="error-text">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row" id="periode-row">
+                    <div class="form-group form-group-half" id="semestre-group">
+                        <label for="{{ form.semestre.id_for_label }}" class="form-label">{{ form.semestre.label }}</label>
+                        {{ form.semestre }}
+                        {% if form.semestre.errors %}
+                            <div class="error-message field-error" id="semestre-errors">
+                                {% for error in form.semestre.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group form-group-half" id="annee-scolaire-group">
+                        <label for="{{ form.annee_scolaire.id_for_label }}" class="form-label">{{ form.annee_scolaire.label }}</label>
+                        {{ form.annee_scolaire }}
+                        {% if form.annee_scolaire.errors %}
+                            <div class="error-message field-error" id="annee-scolaire-errors">
+                                {% for error in form.annee_scolaire.errors %}
+                                    <span class="error-text">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group" id="format-export-group">
+                    <label for="{{ form.format_export.id_for_label }}" class="form-label">{{ form.format_export.label }}</label>
+                    {{ form.format_export }}
+                    {% if form.format_export.errors %}
+                        <div class="error-message field-error" id="format-export-errors">
+                            {% for error in form.format_export.errors %}
+                                <span class="error-text">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors non-field-errors" id="form-errors">
+                        {% for error in form.non_field_errors %}
+                            <div class="error-message general-error">
+                                <span class="error-text">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-actions" id="form-actions">
+                    <button type="submit" class="btn btn-primary generate-btn" id="submit-btn">
+                        <span class="btn-text">Générer les bulletins</span>
+                        <span class="btn-loader" id="btn-loader" style="display: none;">Génération en cours...</span>
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary cancel-btn" id="cancel-btn">
+                        <span class="btn-text">Annuler</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Informations sur les formats -->
+        <div class="format-info-section info-section" id="format-info-section">
+            <h3 class="section-title" id="format-info-title">
+                <span class="title-icon">ℹ️</span>
+                Informations sur les formats
+            </h3>
+            
+            <div class="format-grid" id="format-grid">
+                <div class="format-item format-card" id="pdf-info">
+                    <div class="format-header">
+                        <span class="format-icon">📄</span>
+                        <h4 class="format-type">PDF individuel</h4>
+                    </div>
+                    <p class="format-description">Génère un fichier ZIP contenant un bulletin PDF séparé pour chaque étudiant de la classe.</p>
+                    <div class="format-features">
+                        <span class="feature-tag">• Un PDF par élève</span>
+                        <span class="feature-tag">• Téléchargement ZIP</span>
+                    </div>
+                </div>
+
+                <div class="format-item format-card" id="pdf-groupe-info">
+                    <div class="format-header">
+                        <span class="format-icon">📑</span>
+                        <h4 class="format-type">PDF groupé</h4>
+                    </div>
+                    <p class="format-description">Génère un seul fichier PDF contenant tous les bulletins de la classe avec saut de page entre chaque élève.</p>
+                    <div class="format-features">
+                        <span class="feature-tag">• Un seul PDF</span>
+                        <span class="feature-tag">• Tous les élèves</span>
+                    </div>
+                </div>
+
+                <div class="format-item format-card" id="excel-info">
+                    <div class="format-header">
+                        <span class="format-icon">📊</span>
+                        <h4 class="format-type">Excel</h4>
+                    </div>
+                    <p class="format-description">Génère un fichier Excel avec les données des bulletins sous format tableur pour analyse et traitement.</p>
+                    <div class="format-features">
+                        <span class="feature-tag">• Format tableur</span>
+                        <span class="feature-tag">• Données analysables</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions-section info-section" id="instructions-section">
+            <h3 class="section-title" id="instructions-title">
+                <span class="title-icon">📋</span>
+                Instructions d'utilisation
+            </h3>
+            <div class="instructions-container">
+                <ol class="instructions-list" id="instructions-list">
+                    <li class="instruction-item">
+                        <span class="instruction-number">1</span>
+                        <div class="instruction-content">
+                            <strong>Sélectionnez la classe</strong> pour laquelle vous souhaitez générer les bulletins
+                        </div>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-number">2</span>
+                        <div class="instruction-content">
+                            <strong>Indiquez le semestre</strong> (exemples : S1, S2, T1, T2)
+                        </div>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-number">3</span>
+                        <div class="instruction-content">
+                            <strong>Précisez l'année scolaire</strong> (format : 2024-2025)
+                        </div>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-number">4</span>
+                        <div class="instruction-content">
+                            <strong>Choisissez le format d'export</strong> selon vos besoins
+                        </div>
+                    </li>
+                    <li class="instruction-item">
+                        <span class="instruction-number">5</span>
+                        <div class="instruction-content">
+                            <strong>Cliquez sur "Générer"</strong> et patientez pendant la génération
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Informations techniques -->
+        <div class="technical-info-section info-section" id="technical-info-section">
+            <h3 class="section-title" id="technical-info-title">
+                <span class="title-icon">⚙️</span>
+                Informations techniques
+            </h3>
+            <div class="technical-grid">
+                <div class="technical-item" id="file-size-info">
+                    <strong>Taille des fichiers :</strong>
+                    <span>Les PDF peuvent être volumineux selon le nombre d'élèves</span>
+                </div>
+                <div class="technical-item" id="generation-time-info">
+                    <strong>Temps de génération :</strong>
+                    <span>Quelques secondes à quelques minutes selon la classe</span>
+                </div>
+                <div class="technical-item" id="browser-support-info">
+                    <strong>Navigateurs supportés :</strong>
+                    <span>Chrome, Firefox, Safari, Edge (versions récentes)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pied de page -->
+        <div class="footer-section" id="footer-section">
+            <p class="footer-text">
+                <span class="footer-icon">📚</span>
+                Système de génération de bulletins - Version 1.0
+            </p>
+        </div>
+    </div>
+
+    <!-- Loader global (masqué par défaut) -->
+    <div class="global-loader" id="global-loader" style="display: none;">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p class="loader-text">Génération des bulletins en cours...</p>
+            <p class="loader-subtext">Veuillez patienter, cela peut prendre quelques instants.</p>
+        </div>
+    </div>
+</body>
+</html>

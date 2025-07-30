@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supprimer un Étudiant</title>
+    <style>
+        /* Styles de base */
+:root {
+    /* Couleurs principales */
+    --color-primary: #1E88E5; /* Bleu - élément principal */
+    --color-secondary: #43A047; /* Vert - confirmation, succès */
+    --color-danger: #E53935; /* Rouge - erreur, suppression */
+    --color-warning: #FB8C00; /* Orange - avertissement */
+    
+    /* Couleurs de fond */
+    --color-background: #F5F7FA; /* Fond général */
+    --color-surface: #FFFFFF; /* Cartes, blocs blancs */
+    
+    /* Couleurs de texte */
+    --color-text: #212121; /* Texte principal */
+    --color-text-muted: #616161; /* Texte secondaire / labels */
+    
+    /* Couleur d'éléments désactivés */
+    --color-disabled: #BDBDBD;
+    
+    /* Ombres et bordures */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --border-radius: 8px;
+}
+
+/* Reset et styles globaux */
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Conteneur principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* En-tête de page */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.page-title {
+    color: var(--color-danger);
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Boutons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 1rem;
+}
+
+.btn-secondary {
+    background-color: var(--color-text-muted);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #757575;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #C62828;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+/* Contenu principal */
+.content {
+    background-color: var(--color-surface);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: var(--shadow-card);
+}
+
+/* Messages */
+.messages {
+    margin-bottom: 25px;
+}
+
+.message {
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.message-error {
+    background-color: #FFEBEE;
+    color: var(--color-danger);
+    border-left: 4px solid var(--color-danger);
+}
+
+.message-success {
+    background-color: #E8F5E9;
+    color: var(--color-secondary);
+    border-left: 4px solid var(--color-secondary);
+}
+
+.message-warning {
+    background-color: #FFF3E0;
+    color: var(--color-warning);
+    border-left: 4px solid var(--color-warning);
+}
+
+/* Section de suppression */
+.delete-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.delete-warning {
+    background-color: #FFF3E0;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--color-warning);
+}
+
+.warning-title {
+    color: var(--color-warning);
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.warning-message {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Détails de l'étudiant */
+.etudiant-details {
+    background-color: #F5F5F5;
+    padding: 20px;
+    border-radius: var(--border-radius);
+}
+
+.etudiant-title {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--color-primary);
+    font-size: 1.3rem;
+}
+
+.etudiant-info p {
+    margin: 8px 0;
+}
+
+.etudiant-info strong {
+    color: var(--color-text);
+    min-width: 150px;
+    display: inline-block;
+}
+
+.statut-actif {
+    color: var(--color-secondary);
+    font-weight: 500;
+}
+
+.statut-inactif {
+    color: var(--color-danger);
+    font-weight: 500;
+}
+
+/* Actions de suppression */
+.delete-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.delete-form {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .page-title {
+        font-size: 1.7rem;
+    }
+    
+    .content {
+        padding: 20px;
+    }
+    
+    .delete-form {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .warning-title {
+        font-size: 1.3rem;
+    }
+    
+    .etudiant-info strong {
+        min-width: 120px;
+        display: block;
+        margin-bottom: 2px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <header class="page-header" id="page-header">
+            <h1 class="page-title" id="page-title">Supprimer l'Étudiant</h1>
+            <div class="header-actions" id="header-actions">
+                <a href="{% url 'liste_etudiants' %}" class="btn btn-secondary" id="btn-retour">Retour à la Liste</a>
+            </div>
+        </header>
+
+        <main class="content" id="main-content">
+            <!-- Messages -->
+            {% if messages %}
+                <div class="messages" id="messages">
+                    {% for message in messages %}
+                        <div class="message message-{{ message.tags }}" id="message-{{ forloop.counter }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Confirmation de suppression -->
+            <div class="delete-container" id="delete-container">
+                <div class="delete-warning" id="delete-warning">
+                    <h2 class="warning-title" id="warning-title">Attention !</h2>
+                    <p class="warning-message" id="warning-message">
+                        Êtes-vous sûr de vouloir supprimer cet étudiant ?
+                    </p>
+                </div>
+
+                <div class="etudiant-details" id="etudiant-details">
+                    <h3 class="etudiant-title" id="etudiant-title">Détails de l'étudiant :</h3>
+                    <div class="etudiant-info" id="etudiant-info">
+                        <p class="etudiant-nom" id="etudiant-nom"><strong>Nom complet :</strong> {{ etudiant.nom_complet }}</p>
+                        <p class="etudiant-numero" id="etudiant-numero"><strong>Numéro étudiant :</strong> {{ etudiant.numero_etudiant }}</p>
+                        <p class="etudiant-classe" id="etudiant-classe"><strong>Classe :</strong> {{ etudiant.classe }}</p>
+                        <p class="etudiant-naissance" id="etudiant-naissance"><strong>Date de naissance :</strong> {{ etudiant.date_naissance|date:"d/m/Y" }}</p>
+                        <p class="etudiant-sexe" id="etudiant-sexe"><strong>Sexe :</strong> {{ etudiant.get_sexe_display }}</p>
+                        <p class="etudiant-inscription" id="etudiant-inscription"><strong>Date d'inscription :</strong> {{ etudiant.date_inscription|date:"d/m/Y à H:i" }}</p>
+                        <p class="etudiant-statut" id="etudiant-statut">
+                            <strong>Statut :</strong>
+                            {% if etudiant.actif %}
+                                <span class="statut-actif">Actif</span>
+                            {% else %}
+                                <span class="statut-inactif">Inactif</span>
+                            {% endif %}
+                        </p>
+                        {% if etudiant.telephone %}
+                            <p class="etudiant-telephone" id="etudiant-telephone"><strong>Téléphone :</strong> {{ etudiant.telephone }}</p>
+                        {% endif %}
+                        {% if etudiant.email %}
+                            <p class="etudiant-email" id="etudiant-email"><strong>Email :</strong> {{ etudiant.email }}</p>
+                        {% endif %}
+                        {% if etudiant.adresse %}
+                            <p class="etudiant-adresse" id="etudiant-adresse"><strong>Adresse :</strong> {{ etudiant.adresse }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="delete-actions" id="delete-actions">
+                    <form method="post" class="delete-form" id="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" id="btn-confirm-delete">
+                            Oui, Supprimer
+                        </button>
+                        <a href="{% url 'liste_etudiants' %}" class="btn btn-secondary" id="btn-cancel">
+                            Annuler
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
